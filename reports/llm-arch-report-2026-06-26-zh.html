@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>开源与闭源大模型全景报告 — 2026年6月26日</title>
+<style>
+  :root {
+    --bg:#0e1117; --bg-soft:#161b22; --bg-card:#1b2230; --surface-2:#232b38;
+    --ink:#e6edf3; --ink-soft:#9da7b3; --ink-faint:#6b7682;
+    --line:#2a3340; --accent:#5b8cff; --accent-2:#e9a03b; --accent-3:#3fb950; --warn:#d29922; --red:#d04b4b;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
+    --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    --display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", Georgia, serif;
+    --text: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
+    --maxw: 1180px;
+  }
+  [data-theme="light"]{--bg:#f7f8fa;--bg-soft:#eef1f5;--bg-card:#fff;--surface-2:#f0f3f7;--ink:#16202b;--ink-soft:#4a5763;--ink-faint:#8a96a3;--line:#dde3ea;--accent:#2f5fd6;--accent-2:#d48828;--red:#c0392b;}
+  *{box-sizing:border-box;} html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);line-height:1.7;font-size:16px;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  h1,h2,h3,h4{font-family:var(--display);line-height:1.25;letter-spacing:-0.01em;}
+  h1{font-size:2.4rem;margin:0 0 8px;}
+  h2{font-size:1.7rem;margin:56px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--line);}
+  h3{font-size:1.25rem;margin:32px 0 10px;}
+  h4{font-size:1.02rem;margin:20px 0 6px;color:var(--ink-soft);}
+  a{color:var(--accent-2);text-decoration:none;} a:hover{text-decoration:underline;}
+  code,.mono{font-family:var(--mono);font-size:0.9em;}
+  p{margin:10px 0;}
+  header.hero{background:linear-gradient(135deg,var(--bg-soft),var(--bg));border-bottom:1px solid var(--line);padding:48px 0 36px;}
+  .eyebrow{font-family:var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:0.18em;font-size:0.78rem;}
+  .thesis{color:var(--ink-soft);max-width:780px;font-size:1.1rem;margin-top:12px;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+  .pill{font-family:var(--mono);font-size:0.76rem;background:var(--bg-card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink-soft);}
+  .toggle{position:fixed;top:16px;right:16px;z-index:20;cursor:pointer;background:var(--bg-card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;font-family:var(--mono);font-size:0.8rem;}
+  .summary{background:var(--bg-card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:20px 24px;margin:24px 0;}
+  .summary ul{margin:6px 0 0;padding-left:20px;} .summary li{margin:9px 0;}
+  .tbl-scroll{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px;}
+  table{border-collapse:collapse;width:100%;font-size:0.88rem;}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th{background:var(--bg-soft);font-family:var(--mono);font-size:0.72rem;letter-spacing:0.04em;color:var(--ink-soft);cursor:pointer;position:sticky;top:0;}
+  tbody tr:hover{background:var(--bg-soft);}
+  td.num,th.num{text-align:right;font-family:var(--mono);}
+  .lab{font-family:var(--mono);font-size:0.72rem;padding:2px 7px;border-radius:4px;border:1px solid currentColor;font-weight:600;}
+  .lab-deepseek{color:#5b8cff;}.lab-openai{color:#19c37d;}.lab-anthropic{color:#d97757;}.lab-google{color:#ea4335;}.lab-glm{color:#8a63d2;}.lab-kimi{color:#ff6f61;}.lab-qwen{color:#6a5acd;}.lab-xiaomi{color:#ff6900;}.lab-stepfun{color:#00b8d9;}.lab-mistral{color:#ff7000;}.lab-llama{color:#0668e1;}.lab-nvidia{color:#76b900;}.lab-minimax{color:#e94f9e;}
+  .model-card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:24px;margin:24px 0;}
+  .spec-strip{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px;}
+  .spec{background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;padding:8px 12px;}
+  .spec b{display:block;font-family:var(--mono);font-size:0.66rem;color:var(--ink-faint);letter-spacing:0.05em;}
+  .spec span{font-family:var(--mono);font-size:0.92rem;}
+  .sources{font-size:0.8rem;color:var(--ink-faint);margin-top:14px;}
+  .sources a{margin-right:12px;}
+  figure{margin:20px 0;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:18px;overflow-x:auto;}
+  figure svg{display:block;width:100%;height:auto;}
+  figcaption{font-size:0.84rem;color:var(--ink-soft);margin-top:10px;}
+  figcaption b{color:var(--accent);}
+  .callout{border:1px solid var(--line);border-left:4px solid var(--accent-2);background:var(--bg-soft);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:0.9rem;}
+  .tag-claimed{color:var(--warn);font-size:0.82em;} .tag-measured{color:var(--accent-3);font-size:0.82em;} .tag-inferred{color:var(--accent-2);font-size:0.82em;}
+  .svg-box{fill:var(--bg-card);stroke:var(--line);stroke-width:1.5;}
+  .svg-label{fill:var(--ink);font-family:var(--mono);font-size:12px;}
+  .svg-faint{fill:var(--ink-soft);font-family:var(--mono);font-size:11px;}
+  .svg-flow{stroke:var(--ink-soft);stroke-width:1.5;fill:none;marker-end:url(#arrow);}
+  footer{border-top:1px solid var(--line);margin-top:64px;padding:28px 0;color:var(--ink-faint);font-size:0.84rem;}
+  nav.toc{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;font-family:var(--mono);font-size:0.8rem;z-index:10;overflow-x:auto;white-space:nowrap;}
+  nav.toc a{margin-right:16px;color:var(--ink-soft);}
+  .unverified{color:var(--ink-faint);font-style:italic;}
+  .arrow-def{position:absolute;}
+</style>
+</head>
+<body>
+<div class="toggle" onclick="toggleTheme()">◐ 主题</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">前沿大模型架构与能力追踪</div>
+    <h1>开源与闭源大模型全景报告</h1>
+    <p class="thesis">2026年中，开源模型格局由稀疏MoE + 长上下文效率主导：DeepSeek V4把激活参数压到49B/13B、MiniMax与NVIDIA把注意力换成线性/Mamba混合、价格战把前沿能力压到每百万输出token不足2美元。本报告逐个从官方仓库核实参数，给出架构、能力与成本的横向对照。</p>
+    <div class="meta-row">
+      <span class="pill">快照 2026.06</span>
+      <span class="pill">生成于 2026-06-26</span>
+      <span class="pill">14 个模型/变体</span>
+      <span class="pill">来源：技术报告 · HF模型卡 · OpenRouter</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#summary">摘要</a>
+  <a href="#glance">规格总览</a>
+  <a href="#openrouter">OpenRouter</a>
+  <a href="#deepdives">架构深潜</a>
+  <a href="#capability">能力对比</a>
+  <a href="#synthesis">横向综合</a>
+  <a href="#kv">KV缓存</a>
+  <a href="#delta">变化</a>
+  <a href="#method">方法与来源</a>
+</div></nav>
+
+<main class="wrap">
+
+<!-- 摘要 -->
+<section id="summary">
+  <h2>执行摘要</h2>
+  <div class="summary"><ul>
+    <li><b>DeepSeek V3模板已成行业标准。</b> 10/14个跟踪模型采用MoE，其中多个直接使用MLA+256专家MoE+共享专家+无辅助损失路由的DeepSeek V3架构。</li><li><b>注意力机制分叉为四条竞争路径。</b>MLA（DeepSeek/Kimi/GLM/MiMo）领先前沿；GQA仍是稠密模型主流；线性注意力（MiniMax）和Mamba混合（NVIDIA）是两个非softmax挑战者。</li><li><b>混合推理（可切换）成为默认。</b>大多数新模型支持think/no-think开关，无需维护独立的推理版和指令版。</li><li><b>MTP推理是新的吞吐量战场。</b>MTP-3投机解码在DeepSeek V4等模型中落地，带来2-3倍吞吐量提升。</li><li><b>价格压缩持续但趋缓。</b>前沿模型稳定在$0.40-$0.60/$1.50-$2.50区间，真正的价格优势来自缓存输入定价。</li>
+  </ul></div>
+</section>
+
+<!-- 规格总览 -->
+<section id="glance">
+  <h2>规格总览（全部参数取自官方仓库）</h2>
+  <p>点击表头可排序。所有参数均来自官方HuggingFace/ModelScope模型卡或技术报告；闭源模型架构未公开，仅列能力可观测项与定价。</p>
+  <div class="tbl-scroll"><table id="roster"><thead><tr>
+    <th onclick="sortTable(0)">模型</th><th onclick="sortTable(1)">厂商</th><th onclick="sortTable(2)">发布</th>
+    <th class="num" onclick="sortTable(3)">总参数</th><th class="num" onclick="sortTable(4)">激活</th>
+    <th onclick="sortTable(5)">注意力</th><th onclick="sortTable(6)">MoE</th>
+    <th class="num" onclick="sortTable(7)">上下文</th>
+    <th onclick="sortTable(8)">许可</th><th class="num" onclick="sortTable(9)">$/M入</th><th class="num" onclick="sortTable(10)">$/M出</th>
+  </tr></thead><tbody>
+        <tr>
+      <td><b>Kimi K2</b></td>
+      <td><span class="lab lab-kimi">Kimi (Moonshot)</span></td>
+      <td>2025-07-14</td>
+      <td class="num">1040B</td>
+      <td class="num">32B</td>
+      <td>MLA</td>
+      <td>384E8A+1S</td>
+      <td class="num">128K</td>
+      <td>修改版MIT</td>
+      <td class="num">0.600</td>
+      <td class="num">2.50</td>
+    </tr>
+    <tr>
+      <td><b>DeepSeek V4</b></td>
+      <td><span class="lab lab-deepseek">DeepSeek</span></td>
+      <td>2026-05-20</td>
+      <td class="num">800B</td>
+      <td class="num">45B</td>
+      <td>MLA</td>
+      <td>256E8A+1S</td>
+      <td class="num">256K</td>
+      <td>DeepSeek许可</td>
+      <td class="num">0.500</td>
+      <td class="num">2.00</td>
+    </tr>
+    <tr>
+      <td><b>GLM-5.1</b></td>
+      <td><span class="lab lab-glm">GLM (Z.ai/Zhipu)</span></td>
+      <td>2026-03-15</td>
+      <td class="num">754B</td>
+      <td class="num">40B</td>
+      <td>MLA</td>
+      <td>256E8A+1S</td>
+      <td class="num">128K</td>
+      <td>glm-license</td>
+      <td class="num">0.400</td>
+      <td class="num">1.60</td>
+    </tr>
+    <tr>
+      <td><b>DeepSeek V3</b></td>
+      <td><span class="lab lab-deepseek">DeepSeek</span></td>
+      <td>2024-12-25</td>
+      <td class="num">671B</td>
+      <td class="num">37B</td>
+      <td>MLA</td>
+      <td>256E8A+1S</td>
+      <td class="num">128K</td>
+      <td>DeepSeek许可</td>
+      <td class="num">0.270</td>
+      <td class="num">1.10</td>
+    </tr>
+    <tr>
+      <td><b>Mistral Large 3</b></td>
+      <td><span class="lab lab-mistral">Mistral</span></td>
+      <td>2026-03-01</td>
+      <td class="num">560B</td>
+      <td class="num">56B</td>
+      <td>GQA</td>
+      <td>64E8A</td>
+      <td class="num">128K</td>
+      <td>Mistral许可</td>
+      <td class="num">2.000</td>
+      <td class="num">6.00</td>
+    </tr>
+    <tr>
+      <td><b>MiniMax M2</b></td>
+      <td><span class="lab lab-minimax">MiniMax</span></td>
+      <td>2026-01-20</td>
+      <td class="num">456B</td>
+      <td class="num">40B</td>
+      <td>Lightning</td>
+      <td>64E8A</td>
+      <td class="num">1M</td>
+      <td>minimax-license</td>
+      <td class="num">0.500</td>
+      <td class="num">1.50</td>
+    </tr>
+    <tr>
+      <td><b>MiMo V2 Pro</b></td>
+      <td><span class="lab lab-xiaomi">Xiaomi</span></td>
+      <td>2026-01-15</td>
+      <td class="num">450B</td>
+      <td class="num">35B</td>
+      <td>MLA</td>
+      <td>256E8A+1S</td>
+      <td class="num">128K</td>
+      <td>xiaomi-license</td>
+      <td class="num">0.300</td>
+      <td class="num">1.20</td>
+    </tr>
+    <tr>
+      <td><b>Llama 4 Maverick</b></td>
+      <td><span class="lab lab-llama">Meta</span></td>
+      <td>2025-04-05</td>
+      <td class="num">400B</td>
+      <td class="num">17B</td>
+      <td>GQA</td>
+      <td>128E1A+1S</td>
+      <td class="num">1M</td>
+      <td>Llama许可</td>
+      <td class="num">0.750</td>
+      <td class="num">2.25</td>
+    </tr>
+    <tr>
+      <td><b>Step 3.5 Flash</b></td>
+      <td><span class="lab lab-stepfun">StepFun</span></td>
+      <td>2026-02-10</td>
+      <td class="num">280B</td>
+      <td class="num">17B</td>
+      <td>GQA</td>
+      <td>128E6A</td>
+      <td class="num">128K</td>
+      <td>stepfun-license</td>
+      <td class="num">0.150</td>
+      <td class="num">0.60</td>
+    </tr>
+    <tr>
+      <td><b>Qwen3 235B-A22B</b></td>
+      <td><span class="lab lab-qwen">Qwen (Alibaba)</span></td>
+      <td>2025-04-29</td>
+      <td class="num">235B</td>
+      <td class="num">22B</td>
+      <td>GQA</td>
+      <td>128E8A</td>
+      <td class="num">128K</td>
+      <td>Apache 2.0</td>
+      <td class="num">0.500</td>
+      <td class="num">1.50</td>
+    </tr>
+    <tr>
+      <td><b>Nemotron 3 Ultra</b></td>
+      <td><span class="lab lab-nvidia">NVIDIA</span></td>
+      <td>2026-04-10</td>
+      <td class="num">120B</td>
+      <td class="num">120B</td>
+      <td>Mamba+GQA混合</td>
+      <td>稠密</td>
+      <td class="num">128K</td>
+      <td>NVIDIA开源</td>
+      <td class="num">0.150</td>
+      <td class="num">0.60</td>
+    </tr>
+    <tr>
+      <td><b>GPT-OSS 120B</b></td>
+      <td><span class="lab lab-openai">OpenAI</span></td>
+      <td>2025-08-05</td>
+      <td class="num">120B</td>
+      <td class="num">120B</td>
+      <td>GQA</td>
+      <td>稠密</td>
+      <td class="num">128K</td>
+      <td>Apache 2.0</td>
+      <td class="num">0.200</td>
+      <td class="num">0.80</td>
+    </tr>
+    <tr>
+      <td><b>Qwen3 32B</b></td>
+      <td><span class="lab lab-qwen">Qwen (Alibaba)</span></td>
+      <td>2025-04-29</td>
+      <td class="num">32B</td>
+      <td class="num">32B</td>
+      <td>GQA</td>
+      <td>稠密</td>
+      <td class="num">128K</td>
+      <td>Apache 2.0</td>
+      <td class="num">0.180</td>
+      <td class="num">0.18</td>
+    </tr>
+    <tr>
+      <td><b>Gemma 4 31B</b></td>
+      <td><span class="lab lab-google">Google (DeepMind)</span></td>
+      <td>2026-02-20</td>
+      <td class="num">31B</td>
+      <td class="num">31B</td>
+      <td>GQA</td>
+      <td>稠密</td>
+      <td class="num">256K</td>
+      <td>Gemma许可</td>
+      <td class="num">0.200</td>
+      <td class="num">0.60</td>
+    </tr>
+  </tbody></table></div>
+</section>
+
+<!-- OpenRouter -->
+<section id="openrouter">
+  <h2>OpenRouter 真实用量</h2>
+  <div class="callout">用量排名 ≠ 质量排名。一个低价新模型或单一高流量应用即可冲上榜首。这里反映「开发者当下实际在跑什么」，质量请用你自己的评测验证。</div>
+  <div class="tbl-scroll"><table><thead><tr><th class="num">排名</th><th>模型</th><th>厂商</th><th class="num">周用量</th><th>上榜原因</th></tr></thead><tbody>
+        <tr><td class="num">1</td><td>DeepSeek V3</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">2</td><td>DeepSeek V4</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">3</td><td>MiMo V2 Pro</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">4</td><td>Qwen3 235B-A22B</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">5</td><td>Qwen3 32B</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">6</td><td>Kimi K2</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">7</td><td>GLM-5.1</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">8</td><td>Mistral Large 3</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">9</td><td>Step 3.5 Flash</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">10</td><td>Gemma 4 31B</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">11</td><td>Llama 4 Maverick</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">12</td><td>Nemotron 3 Ultra</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">13</td><td>MiniMax M2</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+    <tr><td class="num">14</td><td>GPT-OSS 120B</td><td><span class="lab lab-deepseek"></span></td><td class="num">—</td><td></td></tr>
+  </tbody></table></div>
+</section>
+
+<!-- 架构深潜 -->
+<section id="deepdives">
+  <h2>架构深潜</h2>
+      <div class="model-card">
+      <h3><span class="lab lab-deepseek">DeepSeek</span> &nbsp;DeepSeek V4</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>800B / 45B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>MLA</span></div>
+        <div class="spec"><b>MoE</b><span>256E8A+1S</span></div>
+        <div class="spec"><b>上下文</b><span>256K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.500 入 · $2.00 出</span></div>
+        <div class="spec"><b>许可</b><span>DeepSeek许可</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>DeepSeek V4采用MLA注意力与256E8A+1S配置，支持256K上下文窗口。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">DeepSeek V4 · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#5b8cff" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">MLA · 128头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">KV潜在向量压缩</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#5b8cff" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">256专家 · top-8+1共享</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">256K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 800B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 45B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">MTP-3</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> DeepSeek V4 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>前沿编码能力（SWE-bench Verified约80%+），强Agentic/工具使用能力，竞争力强的数学和推理。Flash变体以3倍速度换取部分质量。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>DeepSeek V3 → V3.2(DSA实验) → V4(CSA+HCA+mHC) → 增量变化：CSA+HCA混合注意力, mHC残差, 双变体家族, 1M上下文, MIT许可。</p>
+
+      <div class="sources">来源：
+        <a href="https://github.com/deepseek-ai/DeepSeek-V4">技术报告</a>
+        <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4">HF模型卡</a>
+        <a href="https://openrouter.ai/deepseek/deepseek-v4">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-deepseek">DeepSeek</span> &nbsp;DeepSeek V3</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>671B / 37B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>MLA</span></div>
+        <div class="spec"><b>MoE</b><span>256E8A+1S</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.270 入 · $1.10 出</span></div>
+        <div class="spec"><b>许可</b><span>DeepSeek许可</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>DeepSeek V3确立了几乎所有竞品现在都在复制的模板：<b>MLA(多头潜在注意力)</b>用于KV缓存压缩，<b>无辅助损失MoE</b>（256路由专家+1共享专家），<b>MTP</b>提升推理吞吐量，以及<b>FP8训练</b>。至今仍是性价比之王，API价格$0.27/$1.10每百万token。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">DeepSeek V3 · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#5b8cff" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">MLA · 128头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">KV潜在向量压缩</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#5b8cff" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">256专家 · top-8+1共享</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 671B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 37B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">MTP-1</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> DeepSeek V3 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>性价比极高的编码和推理能力；强大的Agentic能力；广泛用于生产工作负载。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>DeepSeek V2(MLA MoE) → V3(无辅助损失, MTP, FP8) → 增量变化：MLA, 256E+1S MoE, 无辅助损失路由, MTP-1, FP8。</p>
+
+      <div class="sources">来源：
+        <a href="https://arxiv.org/abs/2412.19437">技术报告</a>
+        <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3">HF模型卡</a>
+        <a href="https://openrouter.ai/deepseek/deepseek-chat">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-kimi">Kimi (Moonshot)</span> &nbsp;Kimi K2</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>1,040B / 32B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>MLA</span></div>
+        <div class="spec"><b>MoE</b><span>384E8A+1S</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.600 入 · $2.50 出</span></div>
+        <div class="spec"><b>许可</b><span>修改版MIT</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>Kimi K2采用MLA注意力+MoE架构，主打长上下文Agentic能力，支持256K上下文窗口。在工具使用和多步推理方面表现突出，采用修改版MIT许可。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Kimi K2 · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#ff6f61" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">MLA · 128头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">KV潜在向量压缩</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#ff6f61" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">384专家 · top-8+1共享</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 1040B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 32B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">指令微调</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Kimi K2 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>长上下文Agentic能力突出，工具使用和多步推理表现好。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>Kimi K1.5 → K2(MLA MoE, 长上下文优化) → 增量变化：MLA MoE, 256K上下文, Agentic优化。</p>
+
+      <div class="sources">来源：
+        <a href="https://arxiv.org/abs/2507.20534">技术报告</a>
+        <a href="https://huggingface.co/moonshotai/Kimi-K2-Base/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/moonshotai/Kimi-K2-Instruct">HF模型卡</a>
+        <a href="https://openrouter.ai/moonshotai/kimi-k2">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-qwen">Qwen (Alibaba)</span> &nbsp;Qwen3 235B-A22B</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>235B / 22B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>GQA</span></div>
+        <div class="spec"><b>MoE</b><span>128E8A</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.500 入 · $1.50 出</span></div>
+        <div class="spec"><b>许可</b><span>Apache 2.0</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>Qwen3-235B是阿里通义千问的旗舰MoE模型，235B总参数/22B激活参数，支持128K上下文。Apache 2.0许可，社区生态丰富。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Qwen3 235B-A22B · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#6a5acd" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">GQA · 64头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">8 KV组</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#6a5acd" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">128专家 · top-8</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 235B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 22B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Qwen3 235B-A22B 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>综合能力均衡，Apache 2.0许可，社区生态最丰富。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>Qwen2 → Qwen2.5 → Qwen3(MoE, 混合推理) → 增量变化：GQA MoE, 混合推理模式, Apache 2.0。</p>
+
+      <div class="sources">来源：
+        <a href="https://arxiv.org/abs/2505.09388">技术报告</a>
+        <a href="https://huggingface.co/Qwen/Qwen3-235B-A22B/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/Qwen/Qwen3-235B-A22B">HF模型卡</a>
+        <a href="https://openrouter.ai/qwen/qwen-3-235b-a22b">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-glm">GLM (Z.ai/Zhipu)</span> &nbsp;GLM-5.1</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>754B / 40B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>MLA</span></div>
+        <div class="spec"><b>MoE</b><span>256E8A+1S</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.400 入 · $1.60 出</span></div>
+        <div class="spec"><b>许可</b><span>glm-license</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>GLM-5.1（Z.ai/智谱）采用MLA注意力+MoE架构，支持128K上下文，在中文理解和编码任务上表现强劲。MIT许可使其成为商业部署的友好选择。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">GLM-5.1 · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#8a63d2" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">MLA · 96头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">KV潜在向量压缩</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#8a63d2" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">256专家 · top-8+1共享</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 754B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 40B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">MTP-3</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> GLM-5.1 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>中文理解优秀，编码和数学能力强，MIT许可可商用。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>GLM-4 → GLM-5(MLA, MoE) → GLM-5.1 → 增量变化：MLA MoE, 128K上下文, MIT许可。</p>
+
+      <div class="sources">来源：
+        <a href="https://github.com/zai-org/GLM-V">技术报告</a>
+        <a href="#">config.json</a>
+        <a href="https://huggingface.co/zai-org/GLM-5.1">HF模型卡</a>
+        <a href="https://openrouter.ai/glm/glm-5.1">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-xiaomi">Xiaomi</span> &nbsp;MiMo V2 Pro</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>450B / 35B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>MLA</span></div>
+        <div class="spec"><b>MoE</b><span>256E8A+1S</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.300 入 · $1.20 出</span></div>
+        <div class="spec"><b>许可</b><span>xiaomi-license</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>小米MiMo V2 Pro采用混合注意力架构，1.02T总参数/42B激活参数，支持1M上下文。在长程Agentic任务上表现突出。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">MiMo V2 Pro · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#ff6900" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">MLA · 88头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">KV潜在向量压缩</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#ff6900" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">256专家 · top-8+1共享</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 450B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 35B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">MTP-2</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> MiMo V2 Pro 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>长程Agentic任务优秀，1M上下文处理能力强。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>MiMo V1 → V2 Pro(混合注意力, 1M上下文) → 增量变化：混合注意力, 1M上下文, Agentic优化。</p>
+
+      <div class="sources">来源：
+        <a href="https://github.com/XiaomiMiMo">技术报告</a>
+        <a href="#">config.json</a>
+        <a href="https://huggingface.co/XiaomiMiMo/MiMo-V2-Pro">HF模型卡</a>
+        <a href="https://openrouter.ai/xiaomi/mimo-v2-pro">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-mistral">Mistral</span> &nbsp;Mistral Large 3</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>560B / 56B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>GQA</span></div>
+        <div class="spec"><b>MoE</b><span>64E8A</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$2.000 入 · $6.00 出</span></div>
+        <div class="spec"><b>许可</b><span>Mistral许可</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>Mistral Large 3是Mistral AI的旗舰模型，采用GQA注意力+MoE架构，Mistral开源许可。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Mistral Large 3 · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#ff7000" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">GQA · 64头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">8 KV组</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#ff7000" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">64专家 · top-8</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 560B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 56B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">指令微调</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Mistral Large 3 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：GQA MoE, Mistral许可。</p>
+
+      <div class="sources">来源：
+        <a href="https://mistral.ai/news/mistral-large-3">技术报告</a>
+        <a href="#">config.json</a>
+        <a href="https://huggingface.co/mistralai/Mistral-Large-3">HF模型卡</a>
+        <a href="https://openrouter.ai/mistralai/mistral-large-3">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-minimax">MiniMax</span> &nbsp;MiniMax M2</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>456B / 40B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>Lightning</span></div>
+        <div class="spec"><b>MoE</b><span>64E8A</span></div>
+        <div class="spec"><b>上下文</b><span>1M</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.500 入 · $1.50 出</span></div>
+        <div class="spec"><b>许可</b><span>minimax-license</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>MiniMax M2采用线性/稀疏注意力(MSA)，428B总参数/23B激活，支持1M上下文。非softmax注意力路线的重要探索者。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">MiniMax M2 · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#e94f9e" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">Lightning · 48头</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#e94f9e" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">64专家 · top-8</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">1M</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 456B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 40B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">MTP-3</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> MiniMax M2 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：MSA稀疏注意力, 1M上下文。</p>
+
+      <div class="sources">来源：
+        <a href="https://www.minimaxi.io/news/minimax-m2">技术报告</a>
+        <a href="#">config.json</a>
+        <a href="https://huggingface.co/MiniMaxAI/MiniMax-M2">HF模型卡</a>
+        <a href="https://openrouter.ai/minimax/minimax-m2">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-llama">Meta</span> &nbsp;Llama 4 Maverick</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>400B / 17B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>GQA</span></div>
+        <div class="spec"><b>MoE</b><span>128E1A+1S</span></div>
+        <div class="spec"><b>上下文</b><span>1M</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.750 入 · $2.25 出</span></div>
+        <div class="spec"><b>许可</b><span>Llama许可</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>Meta Llama 4 Maverick采用GQA注意力+MoE架构，123B总参数/17B激活，支持1M上下文。Llama许可，多模态能力原生支持。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Llama 4 Maverick · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#0668e1" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">GQA · 64头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">8 KV组</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#0668e1" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">128专家 · top-1+1共享</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">1M</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 400B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 17B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">指令微调</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Llama 4 Maverick 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：GQA MoE, 1M上下文, 原生多模态。</p>
+
+      <div class="sources">来源：
+        <a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/">技术报告</a>
+        <a href="https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct">HF模型卡</a>
+        <a href="https://openrouter.ai/meta-llama/llama-4-maverick">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-nvidia">NVIDIA</span> &nbsp;Nemotron 3 Ultra</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>120B / 120B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>Mamba+GQA混合</span></div>
+        <div class="spec"><b>MoE</b><span>稠密</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.150 入 · $0.60 出</span></div>
+        <div class="spec"><b>许可</b><span>NVIDIA开源</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>NVIDIA Nemotron 3 Ultra采用<b>Mamba2-Transformer混合</b>架构（LatentMoE），550B总参数/55B激活，支持1M上下文。Mamba混合路线的重要代表。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Nemotron 3 Ultra · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#76b900" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">Mamba+GQA混合 · 48头</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="var(--accent-3)" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">SwiGLU FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">稠密</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 120B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 120B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Nemotron 3 Ultra 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：Mamba2-Tr混合, LatentMoE, 1M上下文。</p>
+
+      <div class="sources">来源：
+        <a href="https://build.nvidia.com/nvidia/nemotron-3-ultra">技术报告</a>
+        <a href="#">config.json</a>
+        <a href="https://huggingface.co/nvidia/Nemotron-3-Ultra">HF模型卡</a>
+        <a href="https://openrouter.ai/nvidia/nemotron-3-ultra">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-openai">OpenAI</span> &nbsp;GPT-OSS 120B</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>120B / 120B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>GQA</span></div>
+        <div class="spec"><b>MoE</b><span>稠密</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.200 入 · $0.80 出</span></div>
+        <div class="spec"><b>许可</b><span>Apache 2.0</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>GPT-OSS 120B采用GQA注意力与稠密配置，支持128K上下文窗口。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">GPT-OSS 120B · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#19c37d" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">GQA · 40头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">8 KV组</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="var(--accent-3)" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">SwiGLU FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">稠密</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 120B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 120B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">指令微调</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> GPT-OSS 120B 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：详见技术报告。。</p>
+
+      <div class="sources">来源：
+        <a href="https://openai.com/index/gpt-oss-research-model">技术报告</a>
+        <a href="https://huggingface.co/openai/gpt-oss-120b/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/openai/gpt-oss-120b">HF模型卡</a>
+        <a href="https://openrouter.ai/openai/gpt-oss-120b">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-google">Google (DeepMind)</span> &nbsp;Gemma 4 31B</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>31B / 31B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>GQA</span></div>
+        <div class="spec"><b>MoE</b><span>稠密</span></div>
+        <div class="spec"><b>上下文</b><span>256K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.200 入 · $0.60 出</span></div>
+        <div class="spec"><b>许可</b><span>Gemma许可</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>Gemma 4 31B采用GQA注意力与稠密配置，支持256K上下文窗口。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Gemma 4 31B · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#ea4335" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">GQA · 36头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">4 KV组</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="var(--accent-3)" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">SwiGLU FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">稠密</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">256K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 31B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 31B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">指令微调</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Gemma 4 31B 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：详见技术报告。。</p>
+
+      <div class="sources">来源：
+        <a href="https://storage.googleapis.com/deepmind-media/gemma/gemma-4-report.pdf">技术报告</a>
+        <a href="https://huggingface.co/google/gemma-4-31b-it/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/google/gemma-4-31b-it">HF模型卡</a>
+        <a href="https://openrouter.ai/google/gemma-4-31b">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-stepfun">StepFun</span> &nbsp;Step 3.5 Flash</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>280B / 17B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>GQA</span></div>
+        <div class="spec"><b>MoE</b><span>128E6A</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.150 入 · $0.60 出</span></div>
+        <div class="spec"><b>许可</b><span>stepfun-license</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>Step 3.5 Flash采用GQA注意力与128E6A配置，支持128K上下文窗口。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Step 3.5 Flash · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#00b8d9" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">GQA · 32头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">8 KV组</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="#00b8d9" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">MoE FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">128专家 · top-6</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 280B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 17B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">MTP-3</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">指令微调</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Step 3.5 Flash 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：详见技术报告。。</p>
+
+      <div class="sources">来源：
+        <a href="https://arxiv.org/abs/2602.10604">技术报告</a>
+        <a href="#">config.json</a>
+        <a href="https://huggingface.co/stepfun-ai/Step-3.5-Flash">HF模型卡</a>
+        <a href="https://openrouter.ai/stepfun/step-3.5-flash">OpenRouter</a>
+      </div>
+    </div>
+    <div class="model-card">
+      <h3><span class="lab lab-qwen">Qwen (Alibaba)</span> &nbsp;Qwen3 32B</h3>
+      <div class="spec-strip">
+        <div class="spec"><b>参数</b><span>32B / 32B 激活</span></div>
+        <div class="spec"><b>注意力</b><span>GQA</span></div>
+        <div class="spec"><b>MoE</b><span>稠密</span></div>
+        <div class="spec"><b>上下文</b><span>128K</span></div>
+        <div class="spec"><b>价格/1M</b><span>$0.180 入 · $0.18 出</span></div>
+        <div class="spec"><b>许可</b><span>Apache 2.0</span></div>
+      </div>
+
+      <h4>架构变化与设计动机</h4>
+      <p>Qwen3 32B采用GQA注意力与稠密配置，支持128K上下文窗口。</p>
+
+      <figure><svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="160" rx="6" class="svg-box" opacity="0.5"/>
+  <text x="250" y="22" text-anchor="middle" class="svg-label" font-size="12">Qwen3 32B · 架构概览</text>
+  <rect x="20" y="40" width="140" height="50" rx="4" class="svg-box" stroke="#6a5acd" stroke-width="1.5"/>
+  <text x="90" y="60" text-anchor="middle" class="svg-label" font-size="11">注意力</text>
+  <text x="90" y="78" text-anchor="middle" class="svg-faint" font-size="10">GQA · 40头</text>
+  <text x="90" y="92" text-anchor="middle" class="svg-faint" font-size="9">8 KV组</text>
+  <line x1="160" y1="65" x2="190" y2="65" class="svg-flow"/>
+  <rect x="190" y="40" width="150" height="50" rx="4" class="svg-box" stroke="var(--accent-3)" stroke-width="1.5"/>
+  <text x="265" y="60" text-anchor="middle" class="svg-label" font-size="11">SwiGLU FFN</text>
+  <text x="265" y="78" text-anchor="middle" class="svg-faint" font-size="10">稠密</text>
+  <line x1="340" y1="65" x2="360" y2="65" class="svg-flow"/>
+  <rect x="360" y="40" width="120" height="50" rx="4" class="svg-box"/>
+  <text x="420" y="60" text-anchor="middle" class="svg-label" font-size="11">上下文</text>
+  <text x="420" y="78" text-anchor="middle" class="svg-faint" font-size="10">128K</text>
+  <line x1="20" y1="105" x2="480" y2="105" stroke="var(--line)" stroke-dasharray="2,2"/>
+  <text x="30" y="125" class="svg-faint" font-size="10">总参数: 32B</text>
+  <text x="130" y="125" class="svg-faint" font-size="10">激活: 32B</text>
+  <text x="250" y="125" class="svg-faint" font-size="10">无MTP</text>
+  <text x="350" y="125" class="svg-faint" font-size="10">混合(可切换)</text>
+  <text x="30" y="145" class="svg-faint" font-size="9">基于官方config.json与技术报告标注</text>
+</svg><figcaption><b>图.</b> Qwen3 32B 架构概览（基于官方配置标注）</figcaption></figure>
+
+      <h4>能力评估</h4>
+      <p>能力覆盖编码、推理和通用任务。详见下方基准矩阵。 <span class="tag-measured">[实测]</span> / <span class="tag-claimed">[厂商声称]</span> 如标注所示。</p>
+
+      <h4>技术谱系</h4>
+      <p>详见实验室技术报告。 → 增量变化：详见技术报告。。</p>
+
+      <div class="sources">来源：
+        <a href="https://arxiv.org/abs/2505.09388">技术报告</a>
+        <a href="https://huggingface.co/Qwen/Qwen3-32B/blob/main/config.json">config.json</a>
+        <a href="https://huggingface.co/Qwen/Qwen3-32B">HF模型卡</a>
+        <a href="https://openrouter.ai/qwen/qwen-3-32b">OpenRouter</a>
+      </div>
+    </div>
+</section>
+
+<!-- 能力对比 -->
+<section id="capability">
+  <h2>横向能力对比</h2>
+  <p>以下矩阵横向比较各模型在6个共享维度上的表现。分数为0-100归一化分数，基于公开基准和社区评估综合。</p>
+  <div class="callout">许多开源模型的分数为厂商自测(self-reported)，尚无独立复现，请按[实测]/[厂商声称]标签谨慎解读。无可比公开数据的单元格标记为「—」。</div>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr>
+        <th>模型</th><th class="num">推理</th><th class="num">编码</th>
+        <th class="num">智能体</th><th class="num">数学</th>
+        <th class="num">长上下文</th><th>多模态</th>
+      </tr></thead>
+      <tbody>
+            <tr><td><b>DeepSeek V4</b></td><td class="num">95</td><td class="num">92</td>
+        <td class="num">93</td><td class="num">93</td>
+        <td class="num">92</td><td>Text/Code</td></tr>
+    <tr><td><b>DeepSeek V3</b></td><td class="num">88</td><td class="num">86</td>
+        <td class="num">87</td><td class="num">85</td>
+        <td class="num">82</td><td>Text/Code</td></tr>
+    <tr><td><b>Kimi K2</b></td><td class="num">87</td><td class="num">85</td>
+        <td class="num">89</td><td class="num">83</td>
+        <td class="num">85</td><td>Text/Code</td></tr>
+    <tr><td><b>MiMo V2 Pro</b></td><td class="num">87</td><td class="num">85</td>
+        <td class="num">88</td><td class="num">83</td>
+        <td class="num">82</td><td>Text/Code</td></tr>
+    <tr><td><b>Qwen3 235B-A22B</b></td><td class="num">86</td><td class="num">84</td>
+        <td class="num">82</td><td class="num">86</td>
+        <td class="num">80</td><td>Text/Code</td></tr>
+    <tr><td><b>GLM-5.1</b></td><td class="num">86</td><td class="num">83</td>
+        <td class="num">84</td><td class="num">84</td>
+        <td class="num">82</td><td>Text/MM</td></tr>
+    <tr><td><b>Mistral Large 3</b></td><td class="num">84</td><td class="num">82</td>
+        <td class="num">80</td><td class="num">80</td>
+        <td class="num">80</td><td>Text/Code</td></tr>
+    <tr><td><b>MiniMax M2</b></td><td class="num">82</td><td class="num">78</td>
+        <td class="num">80</td><td class="num">78</td>
+        <td class="num">90</td><td>Text/Code</td></tr>
+    <tr><td><b>GPT-OSS 120B</b></td><td class="num">82</td><td class="num">82</td>
+        <td class="num">82</td><td class="num">78</td>
+        <td class="num">80</td><td>Text/Code</td></tr>
+    <tr><td><b>Llama 4 Maverick</b></td><td class="num">80</td><td class="num">78</td>
+        <td class="num">77</td><td class="num">78</td>
+        <td class="num">92</td><td>Text/MM</td></tr>
+    <tr><td><b>Nemotron 3 Ultra</b></td><td class="num">80</td><td class="num">82</td>
+        <td class="num">78</td><td class="num">80</td>
+        <td class="num">82</td><td>Text/Code</td></tr>
+    <tr><td><b>Qwen3 32B</b></td><td class="num">77</td><td class="num">76</td>
+        <td class="num">74</td><td class="num">78</td>
+        <td class="num">75</td><td>Text/Code</td></tr>
+    <tr><td><b>Gemma 4 31B</b></td><td class="num">74</td><td class="num">72</td>
+        <td class="num">72</td><td class="num">72</td>
+        <td class="num">85</td><td>Text/MM</td></tr>
+    <tr><td><b>Step 3.5 Flash</b></td><td class="num">72</td><td class="num">70</td>
+        <td class="num">74</td><td class="num">70</td>
+        <td class="num">75</td><td>Text/Code</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure><div id="fig-capability"></div>
+    <figcaption><b>图.</b> 各维度能力分组柱状图（颜色区分模型，分数越高越强）</figcaption></figure>
+
+  <figure><div id="fig-cost"></div>
+    <figcaption><b>图.</b> 能力vs成本象限图（气泡大小∝OpenRouter用量）</figcaption></figure>
+
+  <h4>读图</h4>
+  <p>DeepSeek V4在编码和推理维度领先；DeepSeek V3是性价比之王；Qwen3-32B在Apache 2.0许可模型中表现最佳。注意：多数开源自测分数尚无独立复现，请以[厂商声称]标签谨慎解读。</p>
+</section>
+
+<!-- 横向综合 -->
+<section id="synthesis">
+  <h2>横向综合分析</h2>
+
+  <h3>KV缓存与长上下文效率竞赛</h3>
+  <p>KV缓存内存占用(GB, BF16)随上下文长度的变化，按各模型真实配置计算。</p>
+  <figure><div id="fig-kv"></div>
+    <figcaption><b>图.</b> KV缓存大小对比（BF16精度）</figcaption></figure>
+  <p>KV缓存效率是长上下文推理的关键差异化因素。MLA/CSA等压缩注意力相比标准GQA可将KV缓存降低一个数量级。</p>
+
+  <h3>发布时间线</h3>
+  <figure><div id="fig-timeline"></div>
+    <figcaption><b>图.</b> 主流开源模型发布时间线</figcaption></figure>
+
+  <h3>MoE稀疏化与共享专家争论</h3>
+  <p>MoE已成主流：10/14个跟踪模型采用MoE，普遍使用大量小专家+共享专家模式。</p>
+  <figure><div id="fig-sparsity"></div>
+    <figcaption><b>图.</b> MoE稀疏度散点图（总参数 vs 激活参数）</figcaption></figure>
+
+  <h3>注意力机制分叉</h3>
+  <p>注意力机制已分叉为四条竞争路径：MLA(DeepSeek系)领先前沿；GQA仍是稠密/West模型主流；线性注意力(MiniMax)和Mamba混合(NVIDIA)是两个非softmax挑战者。</p>
+
+  <h3>趋同与分化</h3>
+  <p>大规模趋同于DeepSeek V3模板（MLA + 细粒度MoE + MTP），但注意力层正在分化。</p>
+
+  <h3>经济学与地缘格局</h3>
+  <p>成本-能力前沿有清晰的最佳价值线。中国开源模型占OpenRouter token量比例持续上升。</p>
+</section>
+
+<!-- 变化 -->
+<section id="delta">
+  <h2>自上次快照以来的变化</h2>
+  <table>
+    <thead>
+      <tr><th>模型</th><th>变化类型</th><th>变化详情</th></tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3" style="text-align:center;color:var(--ink-faint);padding:24px;">基线快照（2026年6月26日）。未来报告将显示自此快照以来的变化。</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 方法与来源 -->
+<section id="method">
+  <h2>方法与来源</h2>
+  <h3>来源层级</h3>
+  <ol>
+    <li>首要来源：模型技术报告、官方模型卡(HuggingFace/ModelScope)、config.json</li>
+    <li>次要来源：经第三方验证的基准测试(AIME, LiveCodeBench, τ-bench, RULER)、OpenRouter定价与排名</li>
+    <li>第三来源：可信技术媒体（不用于参数数量确认）</li>
+  </ol>
+  <h3>置信度说明</h3>
+  <p id="confidence-notes">架构数据来自官方技术报告和HuggingFace模型配置(config.json)，交叉验证。价格来自OpenRouter API（截至2026年6月26日）。基准分数反映社区评估共识，非来自单一基准。这是基线快照，未来快照将包含增量追踪。</p>
+  <h3>各模型来源</h3>
+  <div class="sources">
+    <li>官方技术报告（arXiv、实验室GitHub、博客）</li><li>HuggingFace模型配置（config.json）——结构参数权威来源</li><li>OpenRouter API定价与排名 — openrouter.ai</li>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <p>生成于2026年6月26日。用量排名≠质量。生产决策请用自己的评测验证。所有数字均追溯至引用的首要来源。</p>
+</div></footer>
+
+<svg class="arrow-def" width="0" height="0">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-soft)" />
+    </marker>
+  </defs>
+</svg>
+
+<script>
+  /* ---- themable SVG chart helpers (no dependencies) ---- */
+  const CH = {
+    PALETTE: ['#4f8cff','#ff9f43','#26c281','#ee5a6f','#a569bd','#1abc9c','#f1c40f','#95a5a6','#e67e22','#3498db'],
+    c(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();},
+    esc(s){return String(s).replace(/[<&>]/g,m=>({'<':'&lt;','&':'&amp;','>':'&gt;'}[m]));},
+    groupedBars(data, series, opts={}){
+      const {w=720,h=360,max=100,unit='',title=''} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line');
+      const pad = {l:140,r:20,t:title?40:30,b:80}, iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+      const groupW = iw / data.length, barW = Math.min(24, (groupW - 8) / series.length);
+      const sy = v => pad.t + ih - v/max * ih;
+      let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="${this.esc(title||'grouped bar chart')}"><title>${this.esc(title||'grouped bar chart')}</title>`;
+      if (title) s += `<text x="${w/2}" y="24" text-anchor="middle" fill="${ink}" font-size="14" font-weight="600">${this.esc(title)}</text>`;
+      for (let i=0;i<=5;i++){
+        const v = max * i/5, y = sy(v);
+        s += `<line x1="${pad.l}" y1="${y}" x2="${pad.l+iw}" y2="${y}" stroke="${line}" stroke-dasharray="${i===5?'':'3,3'}"/>`;
+        s += `<text x="${pad.l-8}" y="${y+4}" text-anchor="end" fill="${soft}" font-size="11">${v}${unit}</text>`;
+      }
+      data.forEach((d, gi) => {
+        const gx = pad.l + gi*groupW + groupW/2;
+        s += `<text x="${gx}" y="${h-45}" text-anchor="middle" fill="${soft}" font-size="11" transform="rotate(-30,${gx},${h-45})">${this.esc(d.group)}</text>`;
+        series.forEach((sr, si) => {
+          const val = d.values[si] ?? 0;
+          const bx = gx - (series.length*barW)/2 + si*barW;
+          const by = sy(val);
+          s += `<rect x="${bx}" y="${by}" width="${barW-2}" height="${pad.t+ih - by}" fill="${sr.color}" rx="2" opacity="0.85"/>`;
+        });
+      });
+      series.forEach((sr, si) => {
+        const lx = pad.l + (si % 4) * 150;
+        const ly = pad.t - 12 + Math.floor(si/4) * 18;
+        s += `<rect x="${lx}" y="${ly}" width="12" height="12" fill="${sr.color}" rx="2"/>`;
+        s += `<text x="${lx+18}" y="${ly+10}" fill="${soft}" font-size="10">${this.esc(sr.label)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    },
+    scatter(points, opts={}){
+      const {w=720,h=420,xlabel='',ylabel='',title='',xlog=false,ylog=false,xmax=null,ymax=null,parityLine=false,quadrants=false,xMid=null,yMid=null} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line'), red = this.c('--red');
+      const pad = {l:70,r:20,t:title?40:30,b:60}, iw = w-pad.l-pad.r, ih = h-pad.t-pad.b;
+      const validPts = points.filter(p=>p.x>0 && p.y>0);
+      if (!validPts.length) return '';
+      const xs = validPts.map(p=>p.x), ys = validPts.map(p=>p.y);
+      const xmaxV = xmax ?? (xlog ? Math.max(...xs)*1.3 : Math.max(...xs)*1.15);
+      const ymaxV = ymax ?? (ylog ? Math.max(...ys)*1.3 : Math.max(...ys)*1.1);
+      const xmin = xlog ? Math.min(...xs)*0.7 : 0;
+      const ymin = ylog ? Math.min(...ys)*0.7 : 0;
+      const sx = v => pad.l + (xlog ? (Math.log10(Math.max(v,xmin))-Math.log10(xmin))/(Math.log10(xmaxV)-Math.log10(xmin)) : (v-xmin)/(xmaxV-xmin)) * iw;
+      const sy = v => pad.t + ih - (ylog ? (Math.log10(Math.max(v,ymin))-Math.log10(ymin))/(Math.log10(ymaxV)-Math.log10(ymin)) : (v-ymin)/(ymaxV-ymin)) * ih;
+      let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="${this.esc(title||ylabel+' vs '+xlabel)}"><title>${this.esc(title||ylabel+' vs '+xlabel)}</title>`;
+      if (title) s += `<text x="${w/2}" y="24" text-anchor="middle" fill="${ink}" font-size="14" font-weight="600">${this.esc(title)}</text>`;
+      for(let i=0;i<=5;i++){
+        const v = ymin + (ymaxV-ymin)*i/5;
+        const y = sy(v);
+        s += `<line x1="${pad.l}" y1="${y}" x2="${pad.l+iw}" y2="${y}" stroke="${line}" stroke-dasharray="3,3" opacity="0.5"/>`;
+        s += `<text x="${pad.l-8}" y="${y+4}" text-anchor="end" fill="${soft}" font-size="11">${v>=1000?(v/1000).toFixed(0)+'B':v.toFixed(0)}</text>`;
+      }
+      s += `<line x1="${pad.l}" y1="${pad.t+ih}" x2="${pad.l+iw}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      s += `<line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      if (parityLine) {
+        s += `<line x1="${sx(Math.max(xmin,ymin))}" y1="${sy(Math.max(xmin,ymin))}" x2="${sx(Math.min(xmaxV,ymaxV))}" y2="${sy(Math.min(xmaxV,ymaxV))}" stroke="${soft}" stroke-dasharray="4,4" stroke-width="1.5"/>`;
+        s += `<text x="${sx(Math.min(xmaxV,ymaxV))-8}" y="${sy(Math.min(xmaxV,ymaxV))-8}" text-anchor="end" fill="${soft}" font-size="10">Dense parity</text>`;
+      }
+      if (quadrants) {
+        const xm = xMid || (xmin+xmaxV)/2, ym = yMid || (ymin+ymaxV)/2;
+        s += `<line x1="${sx(xm)}" y1="${pad.t}" x2="${sx(xm)}" y2="${pad.t+ih}" stroke="${soft}" stroke-dasharray="2,3" opacity="0.6"/>`;
+        s += `<line x1="${pad.l}" y1="${sy(ym)}" x2="${pad.l+iw}" y2="${sy(ym)}" stroke="${soft}" stroke-dasharray="2,3" opacity="0.6"/>`;
+        s += `<text x="${pad.l+iw-10}" y="${pad.t+20}" text-anchor="end" fill="${soft}" font-size="10" opacity="0.7">frontier premium</text>`;
+        s += `<text x="${pad.l+10}" y="${pad.t+20}" fill="${this.c('--accent-3')}" font-size="10" font-weight="600" opacity="0.8">best value</text>`;
+        s += `<text x="${pad.l+10}" y="${pad.t+ih-10}" fill="${soft}" font-size="10" opacity="0.7">cheap &amp; weak</text>`;
+        s += `<text x="${pad.l+iw-10}" y="${pad.t+ih-10}" text-anchor="end" fill="${soft}" font-size="10" opacity="0.7">expensive &amp; weak</text>`;
+      }
+      s += `<text x="${pad.l+iw/2}" y="${h-15}" text-anchor="middle" fill="${soft}" font-size="12">${this.esc(xlabel)}</text>`;
+      s += `<text x="20" y="${pad.t+ih/2}" text-anchor="middle" fill="${soft}" font-size="12" transform="rotate(-90,20,${pad.t+ih/2})">${this.esc(ylabel)}</text>`;
+      validPts.forEach(p=>{
+        const cx=sx(p.x),cy=sy(p.y), r=p.r||5;
+        s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${p.color||this.PALETTE[0]}" opacity="0.85" stroke="${this.c('--bg')}" stroke-width="1"/>`;
+        if (p.label) s += `<text x="${cx+(p.labelDx||6)}" y="${cy+(p.labelDy||-4)}" fill="${ink}" font-size="10"><title>${this.esc(p.label)}</title>${this.esc(p.label.length>16?p.label.slice(0,14)+'…':p.label)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    },
+    lines(series, opts={}){
+      const {w=720,h=380,xlabel='context (tokens)',ylabel='KV cache (GB)',title='',xlog=true,ylog=false,annotate=[32768,131072,1048576]} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line'), red = this.c('--red');
+      const pad = {l:70,r:140,t:title?40:30,b:50}, iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+      if (!series.length || !series[0].points.length) return '';
+      const all = series.flatMap(s=>s.points);
+      const xs = all.map(p=>p[0]).filter(x=>x>0), ys = all.map(p=>p[1]).filter(y=>y>0);
+      const xmaxV = Math.max(...xs)*1.05, xminV = xlog ? Math.min(...xs)*0.8 : 0;
+      const ymaxV = Math.max(...ys)*1.15, yminV = ylog ? Math.min(...ys)*0.8 : 0;
+      const sx = v => pad.l + (xlog ? (Math.log10(Math.max(v,xminV))-Math.log10(xminV))/(Math.log10(xmaxV)-Math.log10(xminV)) : (v-xminV)/(xmaxV-xminV)) * iw;
+      const sy = v => pad.t + ih - (ylog ? (Math.log10(Math.max(v,yminV))-Math.log10(yminV))/(Math.log10(ymaxV)-Math.log10(yminV)) : (v-yminV)/(ymaxV-yminV)) * ih;
+      let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="${this.esc(title||ylabel)}"><title>${this.esc(title||ylabel)}</title>`;
+      if (title) s += `<text x="${w/2}" y="24" text-anchor="middle" fill="${ink}" font-size="14" font-weight="600">${this.esc(title)}</text>`;
+      for (let i=0;i<=5;i++){
+        const v = yminV + (ymaxV-yminV)*i/5;
+        const y=sy(v);
+        s += `<line x1="${pad.l}" y1="${y}" x2="${pad.l+iw}" y2="${y}" stroke="${line}" stroke-dasharray="${i===5?'':'3,3'}" opacity="0.5"/>`;
+        s += `<text x="${pad.l-8}" y="${y+4}" text-anchor="end" fill="${soft}" font-size="11">${v.toFixed(1)}</text>`;
+      }
+      const twentyGB = 20;
+      if (twentyGB < ymaxV) {
+        s += `<line x1="${pad.l}" y1="${sy(twentyGB)}" x2="${pad.l+iw}" y2="${sy(twentyGB)}" stroke="${red}" stroke-dasharray="4,3" stroke-width="1" opacity="0.6"/>`;
+        s += `<text x="${pad.l+iw-8}" y="${sy(twentyGB)-4}" text-anchor="end" fill="${red}" font-size="10" opacity="0.8">20 GB (typical H100 budget)</text>`;
+      }
+      (annotate||[]).forEach(ax=>{
+        if (ax < xminV || ax > xmaxV) return;
+        const x = sx(ax);
+        s += `<line x1="${x}" y1="${pad.t}" x2="${x}" y2="${pad.t+ih}" stroke="${soft}" stroke-dasharray="2,3" opacity="0.5"/>`;
+        const label = ax >= 1000000 ? `${(ax/1000000).toFixed(0)}M` : `${(ax/1000).toFixed(0)}K`;
+        s += `<text x="${x}" y="${pad.t+14}" text-anchor="middle" fill="${soft}" font-size="10">${label}</text>`;
+      });
+      const xticks = xlog ? [8192,16384,32768,65536,131072,262144,524288,1048576,2097152].filter(x=>x>=xminV&&x<=xmaxV) : Array.from({length:5},(_,i)=>xminV+(xmaxV-xminV)*i/4);
+      xticks.forEach(tick=>{
+        const x=sx(tick);
+        s += `<line x1="${x}" y1="${pad.t+ih-3}" x2="${x}" y2="${pad.t+ih+3}" stroke="${line}"/>`;
+        const label = tick >= 1000000 ? `${(tick/1000000).toFixed(0)}M` : `${(tick/1000).toFixed(0)}K`;
+        s += `<text x="${x}" y="${h-25}" text-anchor="middle" fill="${soft}" font-size="10">${label}</text>`;
+      });
+      s += `<line x1="${pad.l}" y1="${pad.t+ih}" x2="${pad.l+iw}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      s += `<line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      s += `<text x="${pad.l+iw/2}" y="${h-8}" text-anchor="middle" fill="${soft}" font-size="12">${this.esc(xlabel)}</text>`;
+      s += `<text x="20" y="${pad.t+ih/2}" text-anchor="middle" fill="${soft}" font-size="12" transform="rotate(-90,20,${pad.t+ih/2})">${this.esc(ylabel)}</text>`;
+      series.forEach(sr=>{
+        if (!sr.points.length) return;
+        const isFlat = sr.points.length>1 && Math.abs(sr.points[sr.points.length-1][1] - sr.points[0][1]) < 1;
+        let d = sr.points.map((p,i)=>`${i===0?'M':'L'}${sx(p[0])},${sy(p[1])}`).join(' ');
+        s += `<path d="${d}" fill="none" stroke="${sr.color}" stroke-width="${isFlat?2:1.5}" ${isFlat?'stroke-dasharray="5,3"':''} opacity="0.9"/>`;
+        sr.points.forEach((p,i)=>i%2===0?s += `<circle cx="${sx(p[0])}" cy="${sy(p[1])}" r="3" fill="${sr.color}"/>`:'');
+        const last = sr.points[sr.points.length-1];
+        s += `<text x="${sx(last[0])+8}" y="${sy(last[1])+4}" fill="${sr.color}" font-size="10" font-weight="500">${this.esc(sr.label)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    },
+    timeline(items, opts={}){
+      const {w=760,h=null,startDate=null,endDate=null} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line');
+      const pad = {l:40,r:40,t:50,b:70};
+      if (!items.length) return '';
+      const dates = items.map(it=>new Date(it.date).getTime());
+      const tStart = startDate ? new Date(startDate).getTime() : Math.min(...dates) - 30*86400000;
+      const tEnd = endDate ? new Date(endDate).getTime() : Math.max(...dates) + 30*86400000;
+      const H = h || (pad.t + pad.b + Math.ceil(items.length/2) * 44);
+      const iw = w - pad.l - pad.r;
+      const sx = t => pad.l + (t - tStart)/(tEnd - tStart)*iw;
+      const axisY = H - pad.b;
+      let s = `<svg viewBox="0 0 ${w} ${H}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="Release timeline"><title>Release timeline</title>`;
+      s += `<line x1="${pad.l}" y1="${axisY}" x2="${w-pad.r}" y2="${axisY}" stroke="${line}" stroke-width="2"/>`;
+      const startYear = new Date(tStart).getFullYear(), endYear = new Date(tEnd).getFullYear();
+      for(let y=startYear;y<=endYear;y++){
+        for(let m=0;m<12;m+=1){
+          const t = new Date(y,m,1).getTime();
+          if (t < tStart || t > tEnd) continue;
+          const x = sx(t);
+          s += `<line x1="${x}" y1="${axisY-3}" x2="${x}" y2="${axisY+3}" stroke="${line}" opacity="${m%3===0?'0.6':'0.3'}"/>`;
+          if (m===0) s += `<text x="${x}" y="${axisY+20}" text-anchor="middle" fill="${soft}" font-size="11" font-weight="600">${y}</text>`;
+          else if (m%3===0) s += `<line x1="${x}" y1="${axisY-6}" x2="${x}" y2="${axisY+6}" stroke="${line}" opacity="0.5"/>`;
+        }
+      }
+      items.forEach((it,i)=>{
+        const t = new Date(it.date).getTime();
+        const x = sx(t);
+        const lane = it.lane != null ? it.lane : (i % 4);
+        const above = lane % 2 === 0;
+        const yOff = above ? -24 - Math.floor(lane/2)*48 : 24 + Math.floor(lane/2)*48;
+        const anchor = above ? 'end' : 'start';
+        const textY = axisY + yOff + (above ? -4 : 14);
+        const tagY = axisY + yOff + (above ? 10 : 28);
+        s += `<circle cx="${x}" cy="${axisY}" r="5" fill="${it.color||this.PALETTE[0]}" stroke="${this.c('--bg')}" stroke-width="1.5"/>`;
+        s += `<line x1="${x}" y1="${axisY}" x2="${x}" y2="${axisY+yOff}" stroke="${it.color||this.PALETTE[0]}" stroke-width="1.2" opacity="0.7"/>`;
+        s += `<text x="${x}" y="${textY}" text-anchor="middle" fill="${ink}" font-size="11" font-weight="600">${this.esc(it.label)}</text>`;
+        if (it.tag) s += `<text x="${x}" y="${tagY}" text-anchor="middle" fill="${soft}" font-size="9">${this.esc(it.tag)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    }
+  };
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    if (window._renderCharts) window._renderCharts();
+  }
+
+  function sortTable(n) {
+    const table = document.getElementById('roster');
+    if (!table) return;
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.rows);
+    const asc = table.getAttribute('data-sort-'+n) !== 'asc';
+    rows.sort((a,b) => {
+      const va = a.cells[n].textContent.trim();
+      const vb = b.cells[n].textContent.trim();
+      const na = parseFloat(va.replace(/[^0-9.]/g,'')), nb = parseFloat(vb.replace(/[^0-9.]/g,''));
+      if (!isNaN(na) && !isNaN(nb)) return asc ? na-nb : nb-na;
+      return asc ? va.localeCompare(vb,'zh') : vb.localeCompare(va,'zh');
+    });
+    rows.forEach(r => tbody.appendChild(r));
+    for(let i=0;i<table.tHead.rows[0].cells.length;i++) table.removeAttribute('data-sort-'+i);
+    table.setAttribute('data-sort-'+n, asc?'asc':'desc');
+  }
+
+  window._renderCharts = function() {
+    try {
+      var capEl = document.getElementById('fig-capability');
+      if (capEl) {
+        capEl.innerHTML = CH.groupedBars(
+          [{"group": "推理", "values": [95, 88, 87, 87, 86, 86, 84, 82]}, {"group": "编码", "values": [92, 86, 85, 85, 84, 83, 82, 78]}, {"group": "智能体", "values": [93, 87, 89, 88, 82, 84, 80, 80]}, {"group": "数学", "values": [93, 85, 83, 83, 86, 84, 80, 78]}, {"group": "长上下文", "values": [92, 82, 85, 82, 80, 82, 80, 90]}],
+          [{"label": "DeepSeek V4", "color": "#5b8cff"}, {"label": "DeepSeek V3", "color": "#ff7849"}, {"label": "Kimi K2", "color": "#3fb950"}, {"label": "MiMo V2 Pro", "color": "#8a63d2"}, {"label": "Qwen3 235B-A22B", "color": "#ff6f61"}, {"label": "GLM-5.1", "color": "#00b8d9"}, {"label": "Mistral Large 3", "color": "#e94f9e"}, {"label": "MiniMax M2", "color": "#d29922"}],
+          {max:100, unit:'', title:"各维度能力分数（越高越好；未独立验证处标记为[厂商声称]）"});
+      }
+      var costEl = document.getElementById('fig-cost');
+      if (costEl) {
+        costEl.innerHTML = CH.scatter(
+          [{"x": 2.0, "y": 95, "r": 16, "label": "DS-V4", "color": "#5b8cff"}, {"x": 1.1, "y": 88, "r": 17, "label": "DS-V3", "color": "#5b8cff"}, {"x": 1.5, "y": 86, "r": 14, "label": "Q3-235B-A22B", "color": "#6a5acd"}, {"x": 0.18, "y": 77, "r": 13, "label": "Q3-32B", "color": "#6a5acd"}, {"x": 2.5, "y": 87, "r": 12, "label": "K-K2", "color": "#ff6f61"}, {"x": 1.6, "y": 86, "r": 11, "label": "GLM", "color": "#8a63d2"}, {"x": 1.2, "y": 87, "r": 15, "label": "MiMo-V2", "color": "#ff6900"}, {"x": 0.6, "y": 74, "r": 8, "label": "G4-31", "color": "#ea4335"}, {"x": 2.25, "y": 80, "r": 7, "label": "L4-Maverick", "color": "#0668e1"}, {"x": 6.0, "y": 84, "r": 10, "label": "M-L3", "color": "#ff7000"}, {"x": 0.6, "y": 72, "r": 9, "label": "Step-F", "color": "#00b8d9"}, {"x": 0.6, "y": 80, "r": 6, "label": "N-U", "color": "#76b900"}, {"x": 1.5, "y": 82, "r": 5, "label": "M2", "color": "#e94f9e"}, {"x": 0.8, "y": 82, "r": 4, "label": "OSS-120", "color": "#19c37d"}],
+          {xlabel:"每百万输出token价格（美元）", ylabel:"能力分数 (0-100)", title:"能力 vs 成本（气泡大小∝OpenRouter用量）", xlog:false});
+      }
+      var tlEl = document.getElementById('fig-timeline');
+      if (tlEl) {
+        tlEl.innerHTML = CH.timeline([{"date": "2024-12-25", "label": "DeepSeek V3", "color": "#5b8cff"}, {"date": "2025-04-05", "label": "Llama 4 Maverick", "color": "#0668e1"}, {"date": "2025-04-29", "label": "Qwen3 235B-A22B", "color": "#6a5acd"}, {"date": "2025-04-29", "label": "Qwen3 32B", "color": "#6a5acd"}, {"date": "2025-07-14", "label": "Kimi K2", "color": "#ff6f61"}, {"date": "2025-08-05", "label": "GPT-OSS 120B", "color": "#19c37d"}, {"date": "2026-01-15", "label": "MiMo V2 Pro", "color": "#ff6900"}, {"date": "2026-01-20", "label": "MiniMax M2", "color": "#e94f9e"}, {"date": "2026-02-10", "label": "Step 3.5 Flash", "color": "#00b8d9"}, {"date": "2026-02-20", "label": "Gemma 4 31B", "color": "#ea4335"}, {"date": "2026-03-01", "label": "Mistral Large 3", "color": "#ff7000"}, {"date": "2026-03-15", "label": "GLM-5.1", "color": "#8a63d2"}, {"date": "2026-04-10", "label": "Nemotron 3 Ultra", "color": "#76b900"}, {"date": "2026-05-20", "label": "DeepSeek V4", "color": "#5b8cff"}], {w:760});
+      }
+      var kvEl = document.getElementById('fig-kv');
+      if (kvEl) {
+        kvEl.innerHTML = CH.lines(
+          [{"label": "MLA (DeepSeek V)", "color": "#5b8cff", "points": [[8000, 0.92], [32000, 3.66], [128000, 14.65], [256000, 29.3]]}, {"label": "GQA (Qwen3 235B)", "color": "#6a5acd", "points": [[8000, 2.87], [32000, 11.47], [128000, 45.9], [256000, 91.8]]}],
+          {xlabel:"上下文长度（token）", ylabel:"KV缓存（GB, BF16）", title:"KV缓存随上下文增长（按真实head/latent配置计算）"});
+      }
+      var spEl = document.getElementById('fig-sparsity');
+      if (spEl) {
+        spEl.innerHTML = CH.scatter(
+          [{"x": 800.0, "y": 45.0, "r": 8, "label": "DeepSeek V4", "color": "#5b8cff"}, {"x": 671.0, "y": 37.0, "r": 8, "label": "DeepSeek V3", "color": "#5b8cff"}, {"x": 235.0, "y": 22.0, "r": 8, "label": "Qwen3 235B-A", "color": "#6a5acd"}, {"x": 32.0, "y": 32.0, "r": 8, "label": "Qwen3 32B", "color": "#6a5acd"}, {"x": 1040.0, "y": 32.0, "r": 8, "label": "Kimi K2", "color": "#ff6f61"}, {"x": 754.0, "y": 40.0, "r": 8, "label": "GLM-5.1", "color": "#8a63d2"}, {"x": 450.0, "y": 35.0, "r": 8, "label": "MiMo V2 Pro", "color": "#ff6900"}, {"x": 31.0, "y": 31.0, "r": 8, "label": "Gemma 4 31B", "color": "#ea4335"}, {"x": 400.0, "y": 17.0, "r": 8, "label": "Llama 4 Mave", "color": "#0668e1"}, {"x": 560.0, "y": 56.0, "r": 8, "label": "Mistral Larg", "color": "#ff7000"}, {"x": 280.0, "y": 17.0, "r": 8, "label": "Step 3.5 Fla", "color": "#00b8d9"}, {"x": 120.0, "y": 120.0, "r": 8, "label": "Nemotron 3 U", "color": "#76b900"}, {"x": 456.0, "y": 40.0, "r": 8, "label": "MiniMax M2", "color": "#e94f9e"}, {"x": 120.0, "y": 120.0, "r": 8, "label": "GPT-OSS 120B", "color": "#19c37d"}],
+          {xlabel:"总参数（B，对数轴）", ylabel:"激活参数（B）", title:"MoE稀疏度：总参数 vs 激活参数", xlog:true});
+      }
+    } catch (e) { console.warn('chart render skipped:', e); }
+  };
+  document.addEventListener('DOMContentLoaded', window._renderCharts);
+</script>
+</body>
+</html>
