@@ -1,0 +1,1293 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-26T00:00:00Z",
+  "snapshot_id": "2026-06-26",
+  "previous_snapshot_id": "2026-06-25",
+  "generated_by": "llm-architecture-tracker",
+  "notes": "Open-weight LLM landscape report as of June 26, 2026. Architecture facts from primary technical reports and HuggingFace configs.",
+  "openrouter_rankings": [
+    {
+      "model_id": "deepseek/deepseek-chat",
+      "display_name": "DeepSeek V3",
+      "usage_rank": 1,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.27,
+      "pricing_output_per_m": 1.1,
+      "pricing_cached_input_per_m": 0.07,
+      "tracked": true
+    },
+    {
+      "model_id": "deepseek/deepseek-v4",
+      "display_name": "DeepSeek V4",
+      "usage_rank": 2,
+      "context_window": 256000,
+      "pricing_input_per_m": 0.5,
+      "pricing_output_per_m": 2.0,
+      "tracked": true
+    },
+    {
+      "model_id": "xiaomi/mimo-v2-pro",
+      "display_name": "MiMo V2 Pro",
+      "usage_rank": 3,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.3,
+      "pricing_output_per_m": 1.2,
+      "tracked": true
+    },
+    {
+      "model_id": "qwen/qwen-3-235b-a22b",
+      "display_name": "Qwen3 235B-A22B",
+      "usage_rank": 4,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.5,
+      "pricing_output_per_m": 1.5,
+      "pricing_cached_input_per_m": 0.25,
+      "tracked": true
+    },
+    {
+      "model_id": "qwen/qwen-3-32b",
+      "display_name": "Qwen3 32B",
+      "usage_rank": 5,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.18,
+      "pricing_output_per_m": 0.18,
+      "tracked": true
+    },
+    {
+      "model_id": "moonshotai/kimi-k2",
+      "display_name": "Kimi K2",
+      "usage_rank": 6,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.6,
+      "pricing_output_per_m": 2.5,
+      "tracked": true
+    },
+    {
+      "model_id": "glm/glm-5.1",
+      "display_name": "GLM-5.1",
+      "usage_rank": 7,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.4,
+      "pricing_output_per_m": 1.6,
+      "tracked": true
+    },
+    {
+      "model_id": "mistralai/mistral-large-3",
+      "display_name": "Mistral Large 3",
+      "usage_rank": 8,
+      "context_window": 128000,
+      "pricing_input_per_m": 2.0,
+      "pricing_output_per_m": 6.0,
+      "tracked": true
+    },
+    {
+      "model_id": "stepfun/step-3.5-flash",
+      "display_name": "Step 3.5 Flash",
+      "usage_rank": 9,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.15,
+      "pricing_output_per_m": 0.6,
+      "tracked": true
+    },
+    {
+      "model_id": "google/gemma-4-31b",
+      "display_name": "Gemma 4 31B",
+      "usage_rank": 10,
+      "context_window": 256000,
+      "pricing_input_per_m": 0.2,
+      "pricing_output_per_m": 0.6,
+      "tracked": true
+    },
+    {
+      "model_id": "meta-llama/llama-4-maverick",
+      "display_name": "Llama 4 Maverick",
+      "usage_rank": 11,
+      "context_window": 1000000,
+      "pricing_input_per_m": 0.75,
+      "pricing_output_per_m": 2.25,
+      "tracked": true
+    },
+    {
+      "model_id": "nvidia/nemotron-3-ultra",
+      "display_name": "Nemotron 3 Ultra",
+      "usage_rank": 12,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.15,
+      "pricing_output_per_m": 0.6,
+      "tracked": true
+    },
+    {
+      "model_id": "minimax/minimax-m2",
+      "display_name": "MiniMax M2",
+      "usage_rank": 13,
+      "context_window": 1000000,
+      "pricing_input_per_m": 0.5,
+      "pricing_output_per_m": 1.5,
+      "tracked": true
+    },
+    {
+      "model_id": "openai/gpt-oss-120b",
+      "display_name": "GPT-OSS 120B",
+      "usage_rank": 14,
+      "context_window": 128000,
+      "pricing_input_per_m": 0.2,
+      "pricing_output_per_m": 0.8,
+      "tracked": true
+    }
+  ],
+  "models": [
+    {
+      "id": "deepseek-v4",
+      "lab": "DeepSeek",
+      "family": "DeepSeek V",
+      "display_name": "DeepSeek V4",
+      "version": "V4",
+      "release_date": "2026-05-20",
+      "is_open_weight": true,
+      "license": "deepseek-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 800,
+      "active_params_b": 45,
+      "num_layers": 60,
+      "hidden_dim": 5120,
+      "intermediate_dim": 15360,
+      "attention_type": "MLA",
+      "num_attention_heads": 128,
+      "num_kv_heads": 1,
+      "head_dim": 128,
+      "kv_cache_strategy": "low-rank",
+      "qk_norm": true,
+      "qk_norm_type": "RMSNorm",
+      "attention_variants": [
+        "sparse-dsa"
+      ],
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "rope_scaling": null,
+      "context_window": 256000,
+      "is_moe": true,
+      "num_experts": 256,
+      "num_active_experts": 8,
+      "num_shared_experts": 1,
+      "routing_strategy": "aux-loss-free",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO",
+        "RLVR"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": true,
+      "mtp_future_tokens": 3,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4"
+      ],
+      "strengths": [
+        "coding",
+        "agentic",
+        "math",
+        "reasoning",
+        "inference efficiency"
+      ],
+      "weaknesses": [
+        "MoE all-to-all communication cost at scale",
+        "Chinese-English balance slightly biased to Chinese"
+      ],
+      "pricing_input_per_m": 0.5,
+      "pricing_output_per_m": 2.0,
+      "pricing_cached_input_per_m": 0.1,
+      "price_per_intelligence": "frontier",
+      "vram_fp8_gb": 90,
+      "vram_fp16_gb": 180,
+      "recommended_hardware": "2x H100/H200 (FP8) or 4x H100 (BF16)",
+      "sources": {
+        "technical_report": "https://github.com/deepseek-ai/DeepSeek-V4",
+        "huggingface_config": "https://huggingface.co/deepseek-ai/DeepSeek-V4/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/deepseek-ai/DeepSeek-V4",
+        "openrouter_page": "https://openrouter.ai/deepseek/deepseek-v4",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "deepseek-v3",
+      "lab": "DeepSeek",
+      "family": "DeepSeek V",
+      "display_name": "DeepSeek V3",
+      "version": "V3",
+      "release_date": "2024-12-25",
+      "is_open_weight": true,
+      "license": "deepseek-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 671,
+      "active_params_b": 37,
+      "num_layers": 61,
+      "hidden_dim": 7168,
+      "intermediate_dim": 18432,
+      "attention_type": "MLA",
+      "num_attention_heads": 128,
+      "num_kv_heads": 1,
+      "head_dim": 128,
+      "kv_cache_strategy": "low-rank",
+      "qk_norm": true,
+      "qk_norm_type": "RMSNorm",
+      "position_encoding": "RoPE",
+      "rope_base": 10000,
+      "context_window": 128000,
+      "is_moe": true,
+      "num_experts": 256,
+      "num_active_experts": 8,
+      "num_shared_experts": 1,
+      "routing_strategy": "aux-loss-free",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": true,
+      "mtp_future_tokens": 1,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4"
+      ],
+      "strengths": [
+        "coding",
+        "math",
+        "reasoning",
+        "price-performance"
+      ],
+      "weaknesses": [
+        "context less than frontier closed models"
+      ],
+      "pricing_input_per_m": 0.27,
+      "pricing_output_per_m": 1.1,
+      "pricing_cached_input_per_m": 0.07,
+      "price_per_intelligence": "best-value",
+      "vram_fp8_gb": 80,
+      "vram_fp16_gb": 160,
+      "recommended_hardware": "2x H100 (FP8)",
+      "sources": {
+        "technical_report": "https://arxiv.org/abs/2412.19437",
+        "huggingface_config": "https://huggingface.co/deepseek-ai/DeepSeek-V3/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+        "openrouter_page": "https://openrouter.ai/deepseek/deepseek-chat",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "qwen3-235b-a22b",
+      "lab": "Qwen (Alibaba)",
+      "family": "Qwen3",
+      "display_name": "Qwen3 235B-A22B",
+      "version": "3",
+      "release_date": "2025-04-29",
+      "is_open_weight": true,
+      "license": "apache-2.0",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 235,
+      "active_params_b": 22,
+      "num_layers": 94,
+      "hidden_dim": 8192,
+      "intermediate_dim": 24576,
+      "attention_type": "GQA",
+      "num_attention_heads": 64,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "standard",
+      "qk_norm": true,
+      "qk_norm_type": "RMSNorm",
+      "attention_variants": [
+        "sliding-window"
+      ],
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "sliding_window_size": 4096,
+      "sliding_window_ratio": 0.25,
+      "is_moe": true,
+      "num_experts": 128,
+      "num_active_experts": 8,
+      "num_shared_experts": 0,
+      "routing_strategy": "top-k",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO",
+        "RLVR"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": false,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4",
+        "AWQ",
+        "GPTQ"
+      ],
+      "strengths": [
+        "reasoning",
+        "multilingual",
+        "coding",
+        "Apache 2.0 license"
+      ],
+      "weaknesses": [
+        "no shared expert (simpler MoE design)",
+        "no MTP"
+      ],
+      "pricing_input_per_m": 0.5,
+      "pricing_output_per_m": 1.5,
+      "pricing_cached_input_per_m": 0.25,
+      "price_per_intelligence": "best-value",
+      "vram_fp8_gb": 48,
+      "vram_fp16_gb": 96,
+      "recommended_hardware": "2x A100/H100 (FP8)",
+      "sources": {
+        "technical_report": "https://arxiv.org/abs/2505.09388",
+        "huggingface_config": "https://huggingface.co/Qwen/Qwen3-235B-A22B/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/Qwen/Qwen3-235B-A22B",
+        "openrouter_page": "https://openrouter.ai/qwen/qwen-3-235b-a22b",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "qwen3-32b",
+      "lab": "Qwen (Alibaba)",
+      "family": "Qwen3",
+      "display_name": "Qwen3 32B",
+      "version": "3",
+      "release_date": "2025-04-29",
+      "is_open_weight": true,
+      "license": "apache-2.0",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 32,
+      "active_params_b": 32,
+      "num_layers": 64,
+      "hidden_dim": 5120,
+      "intermediate_dim": 14336,
+      "attention_type": "GQA",
+      "num_attention_heads": 40,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "standard",
+      "qk_norm": true,
+      "qk_norm_type": "RMSNorm",
+      "attention_variants": [
+        "sliding-window"
+      ],
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "sliding_window_size": 4096,
+      "sliding_window_ratio": 0.25,
+      "is_moe": false,
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO",
+        "RLVR"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": false,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4",
+        "AWQ",
+        "GPTQ"
+      ],
+      "strengths": [
+        "self-hostable",
+        "multilingual",
+        "coding",
+        "Apache 2.0",
+        "best small model"
+      ],
+      "weaknesses": [
+        "not frontier level at hard reasoning"
+      ],
+      "pricing_input_per_m": 0.18,
+      "pricing_output_per_m": 0.18,
+      "price_per_intelligence": "budget",
+      "vram_fp8_gb": 32,
+      "vram_fp16_gb": 64,
+      "vram_int4_gb": 18,
+      "recommended_hardware": "1x A100 80GB (BF16) or 1x RTX 4090 (INT4)",
+      "sources": {
+        "technical_report": "https://arxiv.org/abs/2505.09388",
+        "huggingface_config": "https://huggingface.co/Qwen/Qwen3-32B/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/Qwen/Qwen3-32B",
+        "openrouter_page": "https://openrouter.ai/qwen/qwen-3-32b",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "kimi-k2",
+      "lab": "Kimi (Moonshot)",
+      "family": "Kimi K",
+      "display_name": "Kimi K2",
+      "version": "K2",
+      "release_date": "2025-07-14",
+      "is_open_weight": true,
+      "license": "moonshot-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 1040,
+      "active_params_b": 32,
+      "num_layers": 60,
+      "hidden_dim": 6144,
+      "intermediate_dim": 20480,
+      "attention_type": "MLA",
+      "num_attention_heads": 128,
+      "num_kv_heads": 1,
+      "head_dim": 128,
+      "kv_cache_strategy": "low-rank",
+      "qk_norm": true,
+      "qk_norm_type": "QK-Clip",
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "is_moe": true,
+      "num_experts": 384,
+      "num_active_experts": 8,
+      "num_shared_experts": 1,
+      "routing_strategy": "top-k with Muon optimizer",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO"
+      ],
+      "reasoning_mode": "instruct-only",
+      "supports_mtp": false,
+      "quantization_support": [
+        "FP8",
+        "INT8"
+      ],
+      "strengths": [
+        "agentic capabilities",
+        "tool use",
+        "long-horizon tasks",
+        "trillion-param scale"
+      ],
+      "weaknesses": [
+        "proprietary license",
+        "large deployment footprint",
+        "no dedicated reasoning mode"
+      ],
+      "pricing_input_per_m": 0.6,
+      "pricing_output_per_m": 2.5,
+      "price_per_intelligence": "premium",
+      "vram_fp8_gb": 120,
+      "vram_fp16_gb": 240,
+      "recommended_hardware": "3x H100/H200 (FP8) or 6x H100 (BF16)",
+      "sources": {
+        "technical_report": "https://arxiv.org/abs/2507.20534",
+        "huggingface_config": "https://huggingface.co/moonshotai/Kimi-K2-Base/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/moonshotai/Kimi-K2-Instruct",
+        "openrouter_page": "https://openrouter.ai/moonshotai/kimi-k2",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "glm-5.1",
+      "lab": "GLM (Z.ai/Zhipu)",
+      "family": "GLM",
+      "display_name": "GLM-5.1",
+      "version": "5.1",
+      "release_date": "2026-03-15",
+      "is_open_weight": true,
+      "license": "glm-license",
+      "modalities": [
+        "text",
+        "code",
+        "image"
+      ],
+      "total_params_b": 754,
+      "active_params_b": 40,
+      "num_layers": 68,
+      "hidden_dim": 6144,
+      "intermediate_dim": 18432,
+      "attention_type": "MLA",
+      "num_attention_heads": 96,
+      "num_kv_heads": 1,
+      "head_dim": 128,
+      "kv_cache_strategy": "low-rank",
+      "qk_norm": true,
+      "attention_variants": [
+        "sparse-dsa"
+      ],
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "is_moe": true,
+      "num_experts": 256,
+      "num_active_experts": 8,
+      "num_shared_experts": 1,
+      "routing_strategy": "aux-loss-free",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO",
+        "RLVR"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": true,
+      "mtp_future_tokens": 3,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4"
+      ],
+      "strengths": [
+        "multimodal",
+        "Chinese language",
+        "coding",
+        "high release cadence"
+      ],
+      "weaknesses": [
+        "English performance slightly behind DeepSeek/Qwen"
+      ],
+      "pricing_input_per_m": 0.4,
+      "pricing_output_per_m": 1.6,
+      "price_per_intelligence": "best-value",
+      "vram_fp8_gb": 85,
+      "vram_fp16_gb": 170,
+      "recommended_hardware": "2x H100/H200 (FP8)",
+      "sources": {
+        "technical_report": "https://github.com/zai-org/GLM-V",
+        "huggingface_card": "https://huggingface.co/zai-org/GLM-5.1",
+        "openrouter_page": "https://openrouter.ai/glm/glm-5.1",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "mimo-v2-pro",
+      "lab": "Xiaomi",
+      "family": "MiMo",
+      "display_name": "MiMo V2 Pro",
+      "version": "V2",
+      "release_date": "2026-01-15",
+      "is_open_weight": true,
+      "license": "xiaomi-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 450,
+      "active_params_b": 35,
+      "num_layers": 58,
+      "hidden_dim": 5632,
+      "intermediate_dim": 16896,
+      "attention_type": "MLA",
+      "num_attention_heads": 88,
+      "num_kv_heads": 1,
+      "head_dim": 128,
+      "kv_cache_strategy": "low-rank",
+      "qk_norm": true,
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "is_moe": true,
+      "num_experts": 256,
+      "num_active_experts": 8,
+      "num_shared_experts": 1,
+      "routing_strategy": "aux-loss-free",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO",
+        "RLVR"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": true,
+      "mtp_future_tokens": 2,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4"
+      ],
+      "strengths": [
+        "agentic",
+        "long-horizon reasoning",
+        "top OpenRouter usage",
+        "coding"
+      ],
+      "weaknesses": [
+        "newcomer with less ecosystem"
+      ],
+      "pricing_input_per_m": 0.3,
+      "pricing_output_per_m": 1.2,
+      "price_per_intelligence": "best-value",
+      "vram_fp8_gb": 55,
+      "vram_fp16_gb": 110,
+      "recommended_hardware": "2x H100 (FP8)",
+      "sources": {
+        "technical_report": "https://github.com/XiaomiMiMo",
+        "huggingface_card": "https://huggingface.co/XiaomiMiMo/MiMo-V2-Pro",
+        "openrouter_page": "https://openrouter.ai/xiaomi/mimo-v2-pro",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "gemma-4-31b",
+      "lab": "Google (DeepMind)",
+      "family": "Gemma",
+      "display_name": "Gemma 4 31B",
+      "version": "4",
+      "release_date": "2026-02-20",
+      "is_open_weight": true,
+      "license": "gemma-license",
+      "modalities": [
+        "text",
+        "code",
+        "image"
+      ],
+      "total_params_b": 31,
+      "active_params_b": 31,
+      "num_layers": 56,
+      "hidden_dim": 4608,
+      "intermediate_dim": 147456,
+      "attention_type": "GQA",
+      "num_attention_heads": 36,
+      "num_kv_heads": 4,
+      "head_dim": 128,
+      "kv_cache_strategy": "shared",
+      "qk_norm": true,
+      "qk_norm_type": "RMSNorm",
+      "attention_variants": [
+        "sliding-window"
+      ],
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "rope_scaling": "YaRN",
+      "context_window": 256000,
+      "sliding_window_size": 512,
+      "sliding_window_ratio": 0.83,
+      "is_moe": false,
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "SwiGLU",
+      "norm_position": "pre-norm-with-embed-norm",
+      "post_training_methods": [
+        "SFT",
+        "DPO"
+      ],
+      "reasoning_mode": "instruct-only",
+      "supports_mtp": false,
+      "quantization_support": [
+        "INT8",
+        "INT4",
+        "AWQ"
+      ],
+      "strengths": [
+        "long context",
+        "multimodal",
+        "KV sharing",
+        "PLE",
+        "efficient"
+      ],
+      "weaknesses": [
+        "not at frontier MoE performance level",
+        "restrictive license"
+      ],
+      "pricing_input_per_m": 0.2,
+      "pricing_output_per_m": 0.6,
+      "price_per_intelligence": "budget",
+      "vram_fp8_gb": 32,
+      "vram_fp16_gb": 62,
+      "vram_int4_gb": 18,
+      "recommended_hardware": "1x A100 80GB (BF16) or 1x RTX 4090 (INT4)",
+      "sources": {
+        "technical_report": "https://storage.googleapis.com/deepmind-media/gemma/gemma-4-report.pdf",
+        "huggingface_config": "https://huggingface.co/google/gemma-4-31b-it/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/google/gemma-4-31b-it",
+        "openrouter_page": "https://openrouter.ai/google/gemma-4-31b",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "llama-4-maverick",
+      "lab": "Meta",
+      "family": "Llama",
+      "display_name": "Llama 4 Maverick",
+      "version": "4",
+      "release_date": "2025-04-05",
+      "is_open_weight": true,
+      "license": "llama-license",
+      "modalities": [
+        "text",
+        "code",
+        "image"
+      ],
+      "total_params_b": 400,
+      "active_params_b": 17,
+      "num_layers": 80,
+      "hidden_dim": 5120,
+      "intermediate_dim": 17920,
+      "attention_type": "GQA",
+      "num_attention_heads": 64,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "standard",
+      "qk_norm": false,
+      "attention_variants": [
+        "sliding-window"
+      ],
+      "position_encoding": "RoPE",
+      "rope_base": 500000,
+      "rope_scaling": "linear",
+      "context_window": 1000000,
+      "sliding_window_size": 262144,
+      "is_moe": true,
+      "num_experts": 128,
+      "num_active_experts": 1,
+      "num_shared_experts": 1,
+      "routing_strategy": "top-k",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "DPO"
+      ],
+      "reasoning_mode": "instruct-only",
+      "supports_mtp": false,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4"
+      ],
+      "strengths": [
+        "multimodal native",
+        "1M context",
+        "iRoPE",
+        "large ecosystem"
+      ],
+      "weaknesses": [
+        "only top-1 expert (very sparse), weaker reasoning than DeepSeek template",
+        "Llama license restrictions"
+      ],
+      "pricing_input_per_m": 0.75,
+      "pricing_output_per_m": 2.25,
+      "price_per_intelligence": "premium",
+      "vram_fp8_gb": 48,
+      "vram_fp16_gb": 96,
+      "recommended_hardware": "2x A100 80GB (FP8)",
+      "sources": {
+        "technical_report": "https://ai.meta.com/blog/llama-4-multimodal-intelligence/",
+        "huggingface_config": "https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct",
+        "openrouter_page": "https://openrouter.ai/meta-llama/llama-4-maverick",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "mistral-large-3",
+      "lab": "Mistral",
+      "family": "Mistral Large",
+      "display_name": "Mistral Large 3",
+      "version": "3",
+      "release_date": "2026-03-01",
+      "is_open_weight": true,
+      "license": "mistral-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 560,
+      "active_params_b": 56,
+      "num_layers": 64,
+      "hidden_dim": 7168,
+      "intermediate_dim": 21504,
+      "attention_type": "GQA",
+      "num_attention_heads": 64,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "standard",
+      "qk_norm": true,
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "is_moe": true,
+      "num_experts": 64,
+      "num_active_experts": 8,
+      "num_shared_experts": 0,
+      "routing_strategy": "top-k (coarsened experts)",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "DPO"
+      ],
+      "reasoning_mode": "instruct-only",
+      "supports_mtp": false,
+      "quantization_support": [
+        "FP8",
+        "INT8"
+      ],
+      "strengths": [
+        "European open model",
+        "adopts DeepSeek MoE template",
+        "coarsened experts for throughput"
+      ],
+      "weaknesses": [
+        "higher price than Chinese alternatives",
+        "no dedicated reasoning mode"
+      ],
+      "pricing_input_per_m": 2.0,
+      "pricing_output_per_m": 6.0,
+      "price_per_intelligence": "premium",
+      "vram_fp8_gb": 68,
+      "vram_fp16_gb": 136,
+      "recommended_hardware": "2x H100 (FP8)",
+      "sources": {
+        "technical_report": "https://mistral.ai/news/mistral-large-3",
+        "huggingface_card": "https://huggingface.co/mistralai/Mistral-Large-3",
+        "openrouter_page": "https://openrouter.ai/mistralai/mistral-large-3",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "step-3.5-flash",
+      "lab": "StepFun",
+      "family": "Step",
+      "display_name": "Step 3.5 Flash",
+      "version": "3.5",
+      "release_date": "2026-02-10",
+      "is_open_weight": true,
+      "license": "stepfun-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 280,
+      "active_params_b": 17,
+      "num_layers": 52,
+      "hidden_dim": 4096,
+      "intermediate_dim": 12288,
+      "attention_type": "GQA",
+      "num_attention_heads": 32,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "standard",
+      "qk_norm": true,
+      "attention_variants": [
+        "sliding-window"
+      ],
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "sliding_window_size": 4096,
+      "is_moe": true,
+      "num_experts": 128,
+      "num_active_experts": 6,
+      "num_shared_experts": 0,
+      "routing_strategy": "top-k",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "GRPO"
+      ],
+      "reasoning_mode": "instruct-only",
+      "supports_mtp": true,
+      "mtp_future_tokens": 3,
+      "quantization_support": [
+        "FP8",
+        "INT8"
+      ],
+      "strengths": [
+        "extremely fast (MTP-3)",
+        "cheap",
+        "high throughput",
+        "flash-attention optimized"
+      ],
+      "weaknesses": [
+        "small active params, not frontier reasoning"
+      ],
+      "pricing_input_per_m": 0.15,
+      "pricing_output_per_m": 0.6,
+      "price_per_intelligence": "budget",
+      "vram_fp8_gb": 32,
+      "vram_fp16_gb": 64,
+      "recommended_hardware": "1x A100 80GB (FP8)",
+      "sources": {
+        "technical_report": "https://arxiv.org/abs/2602.10604",
+        "huggingface_card": "https://huggingface.co/stepfun-ai/Step-3.5-Flash",
+        "openrouter_page": "https://openrouter.ai/stepfun/step-3.5-flash",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "nemotron-3-ultra",
+      "lab": "NVIDIA",
+      "family": "Nemotron",
+      "display_name": "Nemotron 3 Ultra",
+      "version": "3",
+      "release_date": "2026-04-10",
+      "is_open_weight": true,
+      "license": "nvidia-open-model-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 120,
+      "active_params_b": 120,
+      "num_layers": 80,
+      "hidden_dim": 6144,
+      "intermediate_dim": 24576,
+      "attention_type": "mamba-hybrid",
+      "num_attention_heads": 48,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "standard",
+      "qk_norm": true,
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "is_moe": false,
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "DPO",
+        "RLVR"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": false,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4"
+      ],
+      "strengths": [
+        "hardware-co-designed",
+        "Mamba-2 hybrid attention",
+        "NVIDIA optimized",
+        "reasoning"
+      ],
+      "weaknesses": [
+        "Mamba layers less proven at scale",
+        "new architecture with less ecosystem"
+      ],
+      "pricing_input_per_m": 0.15,
+      "pricing_output_per_m": 0.6,
+      "price_per_intelligence": "best-value",
+      "vram_fp8_gb": 120,
+      "vram_fp16_gb": 240,
+      "recommended_hardware": "2x H100/H200 (BF16) or NVIDIA Blackwell (FP8)",
+      "sources": {
+        "technical_report": "https://build.nvidia.com/nvidia/nemotron-3-ultra",
+        "huggingface_card": "https://huggingface.co/nvidia/Nemotron-3-Ultra",
+        "openrouter_page": "https://openrouter.ai/nvidia/nemotron-3-ultra",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "minimax-m2",
+      "lab": "MiniMax",
+      "family": "MiniMax",
+      "display_name": "MiniMax M2",
+      "version": "M2",
+      "release_date": "2026-01-20",
+      "is_open_weight": true,
+      "license": "minimax-license",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 456,
+      "active_params_b": 40,
+      "num_layers": 80,
+      "hidden_dim": 6144,
+      "intermediate_dim": 18432,
+      "attention_type": "lightning",
+      "num_attention_heads": 48,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "compressed",
+      "qk_norm": true,
+      "attention_variants": [
+        "linear-attn"
+      ],
+      "position_encoding": "NoPE",
+      "context_window": 1000000,
+      "is_moe": true,
+      "num_experts": 64,
+      "num_active_experts": 8,
+      "num_shared_experts": 0,
+      "routing_strategy": "top-k with CISPO",
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "MoE-SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "CISPO",
+        "RLVR"
+      ],
+      "reasoning_mode": "hybrid",
+      "supports_mtp": true,
+      "mtp_future_tokens": 3,
+      "quantization_support": [
+        "FP8",
+        "INT8"
+      ],
+      "strengths": [
+        "1M context",
+        "linear attention (fixed-size KV)",
+        "CISPO RL",
+        "lightning fast"
+      ],
+      "weaknesses": [
+        "linear attention quality tradeoffs",
+        "newer architecture"
+      ],
+      "pricing_input_per_m": 0.5,
+      "pricing_output_per_m": 1.5,
+      "price_per_intelligence": "premium",
+      "vram_fp8_gb": 55,
+      "vram_fp16_gb": 110,
+      "recommended_hardware": "2x H100 (FP8)",
+      "sources": {
+        "technical_report": "https://www.minimaxi.io/news/minimax-m2",
+        "huggingface_card": "https://huggingface.co/MiniMaxAI/MiniMax-M2",
+        "openrouter_page": "https://openrouter.ai/minimax/minimax-m2",
+        "last_verified": "2026-06-25"
+      }
+    },
+    {
+      "id": "gpt-oss-120b",
+      "lab": "OpenAI",
+      "family": "gpt-oss",
+      "display_name": "GPT-OSS 120B",
+      "version": "1",
+      "release_date": "2025-08-05",
+      "is_open_weight": true,
+      "license": "apache-2.0",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "total_params_b": 120,
+      "active_params_b": 120,
+      "num_layers": 48,
+      "hidden_dim": 5120,
+      "intermediate_dim": 15360,
+      "attention_type": "GQA",
+      "num_attention_heads": 40,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "kv_cache_strategy": "standard",
+      "qk_norm": true,
+      "position_encoding": "RoPE",
+      "rope_base": 1000000,
+      "context_window": 128000,
+      "is_moe": false,
+      "normalization_type": "Pre-RMSNorm",
+      "ffn_type": "SwiGLU",
+      "norm_position": "pre-norm",
+      "post_training_methods": [
+        "SFT",
+        "DPO"
+      ],
+      "reasoning_mode": "instruct-only",
+      "reasoning_budget_tokens": 32768,
+      "supports_mtp": false,
+      "quantization_support": [
+        "FP8",
+        "INT8",
+        "INT4"
+      ],
+      "strengths": [
+        "Apache 2.0 license",
+        "OpenAI's first open model",
+        "reasoning effort control",
+        "strong coding"
+      ],
+      "weaknesses": [
+        "dense model (large for single GPU)",
+        "no MoE efficiency"
+      ],
+      "pricing_input_per_m": 0.2,
+      "pricing_output_per_m": 0.8,
+      "price_per_intelligence": "best-value",
+      "vram_fp8_gb": 120,
+      "vram_fp16_gb": 240,
+      "recommended_hardware": "2x A100 80GB (BF16) or 4x RTX 4090 (INT4)",
+      "sources": {
+        "technical_report": "https://openai.com/index/gpt-oss-research-model",
+        "huggingface_config": "https://huggingface.co/openai/gpt-oss-120b/blob/main/config.json",
+        "huggingface_card": "https://huggingface.co/openai/gpt-oss-120b",
+        "openrouter_page": "https://openrouter.ai/openai/gpt-oss-120b",
+        "last_verified": "2026-06-25"
+      }
+    }
+  ],
+  "hf_configs": [],
+  "synthesis": {
+    "architecture_trends": [
+      {
+        "trend": "DeepSeek V3 template convergence",
+        "evidence_models": [
+          "deepseek-v3",
+          "deepseek-v4",
+          "kimi-k2",
+          "glm-5.1",
+          "mimo-v2-pro",
+          "mistral-large-3"
+        ],
+        "description": "MLA attention + aux-loss-free MoE with 256 routed experts + shared expert + MTP has become the dominant open-weight architecture, adopted or adapted by nearly every major lab except Google and Meta."
+      },
+      {
+        "trend": "Sparse attention (DSA) goes mainstream",
+        "evidence_models": [
+          "deepseek-v4",
+          "glm-5.1"
+        ],
+        "description": "DeepSeek Sparse Attention (lightning indexer + token selector) replaces fixed sliding windows in frontier models for O(L·k) attention at long context."
+      },
+      {
+        "trend": "Linear/lightning attention as Mamba competitor",
+        "evidence_models": [
+          "minimax-m2"
+        ],
+        "description": "MiniMax's lightning attention (fixed-size running state, 7:1 lightning:softmax ratio) achieves 1M context without growing KV cache, challenging Mamba hybrids."
+      },
+      {
+        "trend": "MTP at inference becomes standard",
+        "evidence_models": [
+          "deepseek-v4",
+          "glm-5.1",
+          "step-3.5-flash",
+          "minimax-m2"
+        ],
+        "description": "Multi-Token Prediction is now used for speculative decoding at inference (MTP-3 is common), delivering 2-3x throughput gains at equal quality."
+      },
+      {
+        "trend": "Hybrid reasoning (think/no-think) is default",
+        "evidence_models": [
+          "deepseek-v3",
+          "deepseek-v4",
+          "qwen3-235b-a22b",
+          "qwen3-32b",
+          "glm-5.1",
+          "mimo-v2-pro",
+          "nemotron-3-ultra",
+          "minimax-m2"
+        ],
+        "description": "Nearly all new open models support toggleable reasoning via chat template, removing the need for separate 'reasoning' and 'instruct' variants."
+      }
+    ],
+    "attention_landscape": {
+      "mha_models": [],
+      "gqa_models": [
+        "qwen3-235b-a22b",
+        "qwen3-32b",
+        "gemma-4-31b",
+        "llama-4-maverick",
+        "mistral-large-3",
+        "step-3.5-flash",
+        "gpt-oss-120b"
+      ],
+      "mla_models": [
+        "deepseek-v3",
+        "deepseek-v4",
+        "kimi-k2",
+        "glm-5.1",
+        "mimo-v2-pro"
+      ],
+      "linear_attn_models": [
+        "minimax-m2"
+      ],
+      "mamba_hybrid_models": [
+        "nemotron-3-ultra"
+      ]
+    },
+    "moe_trends": {
+      "num_moe_models": 10,
+      "avg_experts": 156,
+      "shared_experts_adoption": 0.6,
+      "typical_sparsity_ratio": 0.05
+    },
+    "context_race": {
+      "longest_advertised": {
+        "model_id": "llama-4-maverick",
+        "context": 1000000
+      },
+      "longest_verified": {
+        "model_id": "minimax-m2",
+        "context": 1000000
+      },
+      "rope_yarn_users": [
+        "gemma-4-31b"
+      ]
+    },
+    "pricing_trends": {
+      "cheapest_per_m_input": {
+        "model_id": "step-3.5-flash",
+        "price": 0.15
+      },
+      "best_value_frontier": [
+        {
+          "model_id": "qwen3-32b",
+          "quality_score": 75,
+          "price_per_m": 0.18
+        },
+        {
+          "model_id": "deepseek-v3",
+          "quality_score": 92,
+          "price_per_m": 0.27
+        },
+        {
+          "model_id": "mimo-v2-pro",
+          "quality_score": 90,
+          "price_per_m": 0.3
+        },
+        {
+          "model_id": "qwen3-235b-a22b",
+          "quality_score": 88,
+          "price_per_m": 0.5
+        },
+        {
+          "model_id": "deepseek-v4",
+          "quality_score": 95,
+          "price_per_m": 0.5
+        }
+      ],
+      "price_compression_vs_last": 0.15
+    },
+    "notable_changes_vs_previous": []
+  }
+}
