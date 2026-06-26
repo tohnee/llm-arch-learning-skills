@@ -31,6 +31,121 @@ def load_snapshot(path):
         return json.load(f)
 
 # ---------------------------------------------------------------------------
+# Source Validation
+# ---------------------------------------------------------------------------
+
+TRUSTED_DOMAINS = [
+    'huggingface.co', 'hf.co',
+    'modelscope.cn',
+    'openrouter.ai',
+    'arxiv.org',
+    'github.com',
+    'deepseek.com', 'deepseek-ai.com',
+    'anthropic.com',
+    'openai.com',
+    'google.com', 'deepmind.google', 'storage.googleapis.com',
+    'meta.com', 'ai.meta.com', 'llama.com',
+    'mistral.ai',
+    'qwenlm.com', 'alibaba.com', 'tongyi.aliyun.com',
+    'moonshot.cn', 'kimi.ai',
+    'xiaomi.com', 'mimo.team',
+    'stepfun.com',
+    'minimax.io', 'minimaxi.io',
+    'nvidia.com', 'build.nvidia.com',
+    'z.ai', 'zai.org', 'bigmodel.cn',
+    'platform.openai.com', 'docs.anthropic.com', 'ai.google.dev', 'api.deepseek.com',
+]
+
+PROHIBITED_DOMAINS = [
+    'medium.com', 'reddit.com', 'twitter.com', 'x.com',
+    'techcrunch.com', 'theverge.com', 'wikipedia.org',
+    'youtube.com', 'youtu.be',
+    'artificialanalysis.ai', 'llm-stats.com',
+]
+
+def extract_domain(url):
+    """Extract domain from URL, removing subdomains for matching."""
+    if not url or not isinstance(url, str):
+        return None
+    url = url.lower().strip()
+    if not url.startswith(('http://', 'https://')):
+        url = 'https://' + url
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        domain = parsed.netloc
+        if domain.startswith('www.'):
+            domain = domain[4:]
+        return domain
+    except Exception:
+        return None
+
+def is_trusted_source(url):
+    """Check if a URL comes from a trusted domain."""
+    domain = extract_domain(url)
+    if not domain:
+        return False
+    for prohibited in PROHIBITED_DOMAINS:
+        if domain == prohibited or domain.endswith('.' + prohibited):
+            return False
+    for trusted in TRUSTED_DOMAINS:
+        if domain == trusted or domain.endswith('.' + trusted):
+            return True
+    return False
+
+def validate_model_sources(model):
+    """Validate that model sources come from trusted domains.
+    Returns (is_valid: bool, issues: list[str])
+    """
+    issues = []
+    sources = model.get('sources', {})
+    if not sources:
+        issues.append(f"{model.get('display_name', model.get('id', 'unknown'))}: missing sources object")
+        return False, issues
+
+    has_p0_source = False
+    source_urls = []
+    is_open_weight = model.get('weights') == 'open'
+
+    for key in ['huggingface_config', 'huggingface_card', 'modelscope_card', 'github_config', 'lab_blog', 'official_pricing', 'openrouter_page']:
+        if key in sources and sources[key]:
+            source_urls.append((key, sources[key], 'P0'))
+
+    for key in ['technical_report']:
+        if key in sources and sources[key]:
+            source_urls.append((key, sources[key], 'P1'))
+
+    if 'additional_sources' in sources and sources['additional_sources']:
+        for i, url in enumerate(sources['additional_sources']):
+            source_urls.append((f'additional[{i}]', url, 'P1'))
+
+    for key, url, priority in source_urls:
+        if not is_trusted_source(url):
+            issues.append(f"{model.get('display_name', model['id'])}: {key} = {url} is NOT from a trusted domain")
+        if priority == 'P0':
+            has_p0_source = True
+
+    last_verified = sources.get('last_verified')
+    if not last_verified:
+        issues.append(f"{model.get('display_name', model['id'])}: missing last_verified date")
+
+    if not has_p0_source:
+        issues.append(f"{model.get('display_name', model['id'])}: no P0 trusted source (config.json from HF/GitHub required)")
+
+    return len(issues) == 0, issues
+
+def validate_all_sources(data):
+    """Validate all models in a snapshot have trusted sources.
+    Returns (all_valid: bool, all_issues: list[str])
+    """
+    all_issues = []
+    models = data.get('models', [])
+    for model in models:
+        valid, issues = validate_model_sources(model)
+        all_issues.extend(issues)
+    return len(all_issues) == 0, all_issues
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -617,7 +732,7 @@ def build_chart_js(models, rankings, lang='zh'):
 # Main
 # ---------------------------------------------------------------------------
 
-def main(snapshot_date=None, lang='zh'):
+def main(snapshot_date=None, lang='zh', strict_sources=True):
     paths = get_paths(snapshot_date)
     snap = load_snapshot(paths['snapshot'])
     models = snap['models']
@@ -625,6 +740,15 @@ def main(snapshot_date=None, lang='zh'):
     syn = snap.get('synthesis', {})
     snap_date = paths['date']
     snap_date_long = format_date_long(snap_date, lang)
+
+    all_valid, source_issues = validate_all_sources(snap)
+    if source_issues:
+        print(f"WARNING: {len(source_issues)} source validation issue(s) found:")
+        for issue in source_issues:
+            print(f"  - {issue}")
+        if strict_sources:
+            print("ERROR: Source validation failed. Run with --no-strict-sources to bypass.")
+            sys.exit(1)
 
     with open(paths['template'], 'r', encoding='utf-8') as f:
         html = f.read()
@@ -811,5 +935,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate LLM landscape HTML report')
     parser.add_argument('--date', type=str, default=None, help='Snapshot date (YYYY-MM-DD), defaults to today')
     parser.add_argument('--lang', type=str, default='zh', choices=['zh', 'en'], help='Report language (zh/en)')
+    parser.add_argument('--no-strict-sources', action='store_true', help='Disable strict trusted source validation')
     args = parser.parse_args()
-    main(args.date, args.lang)
+    main(args.date, args.lang, strict_sources=not args.no_strict_sources)
