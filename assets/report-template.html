@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{REPORT_TITLE}} — {{SNAPSHOT_DATE}}</title>
+<style>
+  :root {
+    --bg:#0e1117; --bg-soft:#161b22; --bg-card:#1b2230; --surface-2:#232b38;
+    --ink:#e6edf3; --ink-soft:#9da7b3; --ink-faint:#6b7682;
+    --line:#2a3340; --accent:#5b8cff; --accent-2:#e9a03b; --accent-3:#3fb950; --warn:#d29922; --red:#d04b4b;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
+    --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    --display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", Georgia, serif;
+    --text: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
+    --maxw: 1180px;
+  }
+  [data-theme="light"]{--bg:#f7f8fa;--bg-soft:#eef1f5;--bg-card:#fff;--surface-2:#f0f3f7;--ink:#16202b;--ink-soft:#4a5763;--ink-faint:#8a96a3;--line:#dde3ea;--accent:#2f5fd6;--accent-2:#d48828;--red:#c0392b;}
+  *{box-sizing:border-box;} html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);line-height:1.7;font-size:16px;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  h1,h2,h3,h4{font-family:var(--display);line-height:1.25;letter-spacing:-0.01em;}
+  h1{font-size:2.4rem;margin:0 0 8px;}
+  h2{font-size:1.7rem;margin:56px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--line);}
+  h3{font-size:1.25rem;margin:32px 0 10px;}
+  h4{font-size:1.02rem;margin:20px 0 6px;color:var(--ink-soft);}
+  a{color:var(--accent-2);text-decoration:none;} a:hover{text-decoration:underline;}
+  code,.mono{font-family:var(--mono);font-size:0.9em;}
+  p{margin:10px 0;}
+  header.hero{background:linear-gradient(135deg,var(--bg-soft),var(--bg));border-bottom:1px solid var(--line);padding:48px 0 36px;}
+  .eyebrow{font-family:var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:0.18em;font-size:0.78rem;}
+  .thesis{color:var(--ink-soft);max-width:780px;font-size:1.1rem;margin-top:12px;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+  .pill{font-family:var(--mono);font-size:0.76rem;background:var(--bg-card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink-soft);}
+  .toggle{position:fixed;top:16px;right:16px;z-index:20;cursor:pointer;background:var(--bg-card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;font-family:var(--mono);font-size:0.8rem;}
+  .summary{background:var(--bg-card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:20px 24px;margin:24px 0;}
+  .summary ul{margin:6px 0 0;padding-left:20px;} .summary li{margin:9px 0;}
+  .tbl-scroll{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px;}
+  table{border-collapse:collapse;width:100%;font-size:0.88rem;}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th{background:var(--bg-soft);font-family:var(--mono);font-size:0.72rem;letter-spacing:0.04em;color:var(--ink-soft);cursor:pointer;position:sticky;top:0;}
+  tbody tr:hover{background:var(--bg-soft);}
+  td.num,th.num{text-align:right;font-family:var(--mono);}
+  .lab{font-family:var(--mono);font-size:0.72rem;padding:2px 7px;border-radius:4px;border:1px solid currentColor;font-weight:600;}
+  .lab-deepseek{color:#5b8cff;}.lab-openai{color:#19c37d;}.lab-anthropic{color:#d97757;}.lab-google{color:#ea4335;}.lab-glm{color:#8a63d2;}.lab-kimi{color:#ff6f61;}.lab-qwen{color:#6a5acd;}.lab-xiaomi{color:#ff6900;}.lab-stepfun{color:#00b8d9;}.lab-mistral{color:#ff7000;}.lab-llama{color:#0668e1;}.lab-nvidia{color:#76b900;}.lab-minimax{color:#e94f9e;}
+  .model-card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:24px;margin:24px 0;}
+  .spec-strip{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px;}
+  .spec{background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;padding:8px 12px;}
+  .spec b{display:block;font-family:var(--mono);font-size:0.66rem;color:var(--ink-faint);letter-spacing:0.05em;}
+  .spec span{font-family:var(--mono);font-size:0.92rem;}
+  .sources{font-size:0.8rem;color:var(--ink-faint);margin-top:14px;}
+  .sources a{margin-right:12px;}
+  figure{margin:20px 0;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:18px;overflow-x:auto;}
+  figure svg{display:block;width:100%;height:auto;}
+  figcaption{font-size:0.84rem;color:var(--ink-soft);margin-top:10px;}
+  figcaption b{color:var(--accent);}
+  .callout{border:1px solid var(--line);border-left:4px solid var(--accent-2);background:var(--bg-soft);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:0.9rem;}
+  .tag-claimed{color:var(--warn);font-size:0.82em;} .tag-measured{color:var(--accent-3);font-size:0.82em;} .tag-inferred{color:var(--accent-2);font-size:0.82em;}
+  .svg-box{fill:var(--bg-card);stroke:var(--line);stroke-width:1.5;}
+  .svg-label{fill:var(--ink);font-family:var(--mono);font-size:12px;}
+  .svg-faint{fill:var(--ink-soft);font-family:var(--mono);font-size:11px;}
+  .svg-flow{stroke:var(--ink-soft);stroke-width:1.5;fill:none;marker-end:url(#arrow);}
+  footer{border-top:1px solid var(--line);margin-top:64px;padding:28px 0;color:var(--ink-faint);font-size:0.84rem;}
+  nav.toc{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;font-family:var(--mono);font-size:0.8rem;z-index:10;overflow-x:auto;white-space:nowrap;}
+  nav.toc a{margin-right:16px;color:var(--ink-soft);}
+  .unverified{color:var(--ink-faint);font-style:italic;}
+  .arrow-def{position:absolute;}
+</style>
+</head>
+<body>
+<div class="toggle" onclick="toggleTheme()">◐ 主题</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">{{EYEBROW}}</div>
+    <h1>{{REPORT_TITLE}}</h1>
+    <p class="thesis">{{ONE_LINE_THESIS}}</p>
+    <div class="meta-row">
+      <span class="pill">{{PILL_SNAPSHOT}}</span>
+      <span class="pill">{{PILL_DATE}}</span>
+      <span class="pill">{{PILL_N_MODELS}}</span>
+      <span class="pill">{{PILL_SOURCES}}</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#summary">{{NAV_SUMMARY}}</a>
+  <a href="#glance">{{NAV_GLANCE}}</a>
+  <a href="#openrouter">{{NAV_OPENROUTER}}</a>
+  <a href="#deepdives">{{NAV_DEEPDIVES}}</a>
+  <a href="#capability">{{NAV_CAPABILITY}}</a>
+  <a href="#synthesis">{{NAV_SYNTHESIS}}</a>
+  <a href="#kv">{{NAV_KV}}</a>
+  <a href="#delta">{{NAV_DELTA}}</a>
+  <a href="#method">{{NAV_METHOD}}</a>
+</div></nav>
+
+<main class="wrap">
+
+<!-- 摘要 -->
+<section id="summary">
+  <h2>{{SECTION_SUMMARY}}</h2>
+  <div class="summary"><ul>
+    {{SUMMARY_BULLETS}}
+  </ul></div>
+</section>
+
+<!-- 规格总览 -->
+<section id="glance">
+  <h2>{{SECTION_GLANCE}}</h2>
+  <p>{{GLANCE_INTRO}}</p>
+  <div class="tbl-scroll"><table id="roster"><thead><tr>
+    <th onclick="sortTable(0)">{{COL_MODEL}}</th><th onclick="sortTable(1)">{{COL_LAB}}</th><th onclick="sortTable(2)">{{COL_RELEASE}}</th>
+    <th class="num" onclick="sortTable(3)">{{COL_TOTAL}}</th><th class="num" onclick="sortTable(4)">{{COL_ACTIVE}}</th>
+    <th onclick="sortTable(5)">{{COL_ATTENTION}}</th><th onclick="sortTable(6)">{{COL_MOE}}</th>
+    <th class="num" onclick="sortTable(7)">{{COL_CONTEXT}}</th>
+    <th onclick="sortTable(8)">{{COL_LICENSE}}</th><th class="num" onclick="sortTable(9)">{{COL_PRICE_IN}}</th><th class="num" onclick="sortTable(10)">{{COL_PRICE_OUT}}</th>
+  </tr></thead><tbody>
+    {{ROSTER_ROWS}}
+  </tbody></table></div>
+</section>
+
+<!-- OpenRouter -->
+<section id="openrouter">
+  <h2>{{SECTION_OPENROUTER}}</h2>
+  <div class="callout">{{OPENROUTER_CALLOUT}}</div>
+  <div class="tbl-scroll"><table><thead><tr><th class="num">{{COL_RANK}}</th><th>{{COL_MODEL}}</th><th>{{COL_LAB}}</th><th class="num">{{COL_WEEKLY}}</th><th>{{COL_WHY}}</th></tr></thead><tbody>
+    {{OPENROUTER_ROWS}}
+  </tbody></table></div>
+</section>
+
+<!-- 架构深潜 -->
+<section id="deepdives">
+  <h2>{{SECTION_DEEPDIVES}}</h2>
+  {{MODEL_CARDS}}
+</section>
+
+<!-- 能力对比 -->
+<section id="capability">
+  <h2>{{SECTION_CAPABILITY}}</h2>
+  <p>{{CAPABILITY_INTRO}}</p>
+  <div class="callout">{{CAPABILITY_CALLOUT}}</div>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr>
+        <th>{{COL_MODEL}}</th><th class="num">{{COL_REASONING}}</th><th class="num">{{COL_CODING}}</th>
+        <th class="num">{{COL_AGENTIC}}</th><th class="num">{{COL_MATH}}</th>
+        <th class="num">{{COL_LONGCTX}}</th><th>{{COL_MM}}</th>
+      </tr></thead>
+      <tbody>
+        {{CAPABILITY_ROWS}}
+      </tbody>
+    </table>
+  </div>
+
+  <figure><div id="fig-capability"></div>
+    <figcaption><b>图.</b> {{CAPABILITY_CHART_CAPTION}}</figcaption></figure>
+
+  <figure><div id="fig-cost"></div>
+    <figcaption><b>图.</b> {{COST_CHART_CAPTION}}</figcaption></figure>
+
+  <h4>{{CAPABILITY_READOUT_TITLE}}</h4>
+  <p>{{CAPABILITY_READOUT}}</p>
+</section>
+
+<!-- 横向综合 -->
+<section id="synthesis">
+  <h2>{{SECTION_SYNTHESIS}}</h2>
+
+  <h3>{{SEC_KV_RACE}}</h3>
+  <p>{{KV_RACE_INTRO}}</p>
+  <figure><div id="fig-kv"></div>
+    <figcaption><b>图.</b> {{KV_CAPTION}}</figcaption></figure>
+  <p>{{KV_RACE_BODY}}</p>
+
+  <h3>{{SEC_TIMELINE}}</h3>
+  <figure><div id="fig-timeline"></div>
+    <figcaption><b>图.</b> {{TIMELINE_CAPTION}}</figcaption></figure>
+
+  <h3>{{SEC_MOE_TREND}}</h3>
+  <p>{{MOE_TREND}}</p>
+  <figure><div id="fig-sparsity"></div>
+    <figcaption><b>图.</b> {{SPARSITY_CAPTION}}</figcaption></figure>
+
+  <h3>{{SEC_ATTENTION_FORK}}</h3>
+  <p>{{ATTENTION_FORK}}</p>
+
+  <h3>{{SEC_CONVERGENCE}}</h3>
+  <p>{{CONVERGENCE}}</p>
+
+  <h3>{{SEC_ECONOMICS}}</h3>
+  <p>{{ECONOMICS}}</p>
+</section>
+
+<!-- 变化 -->
+<section id="delta">
+  <h2>{{SECTION_DELTA}}</h2>
+  <table>
+    <thead>
+      <tr><th>{{COL_MODEL}}</th><th>{{COL_CHANGE_TYPE}}</th><th>{{COL_CHANGE_SUMMARY}}</th></tr>
+    </thead>
+    <tbody>
+      {{DELTA_ROWS}}
+    </tbody>
+  </table>
+</section>
+
+<!-- 方法与来源 -->
+<section id="method">
+  <h2>{{SECTION_METHOD}}</h2>
+  <h3>{{SEC_SOURCE_HIERARCHY}}</h3>
+  <ol>
+    <li>{{SOURCE_1}}</li>
+    <li>{{SOURCE_2}}</li>
+    <li>{{SOURCE_3}}</li>
+  </ol>
+  <h3>{{SEC_CONFIDENCE}}</h3>
+  <p id="confidence-notes">{{METHODOLOGY}}</p>
+  <h3>{{SEC_SOURCES_BY_MODEL}}</h3>
+  <div class="sources">
+    {{SOURCE_LIST}}
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <p>{{FOOTER_TEXT}}</p>
+</div></footer>
+
+<svg class="arrow-def" width="0" height="0">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-soft)" />
+    </marker>
+  </defs>
+</svg>
+
+<script>
+  /* ---- themable SVG chart helpers (no dependencies) ---- */
+  const CH = {
+    PALETTE: ['#4f8cff','#ff9f43','#26c281','#ee5a6f','#a569bd','#1abc9c','#f1c40f','#95a5a6','#e67e22','#3498db'],
+    c(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();},
+    esc(s){return String(s).replace(/[<&>]/g,m=>({'<':'&lt;','&':'&amp;','>':'&gt;'}[m]));},
+    groupedBars(data, series, opts={}){
+      const {w=720,h=360,max=100,unit='',title=''} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line');
+      const pad = {l:140,r:20,t:title?40:30,b:80}, iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+      const groupW = iw / data.length, barW = Math.min(24, (groupW - 8) / series.length);
+      const sy = v => pad.t + ih - v/max * ih;
+      let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="${this.esc(title||'grouped bar chart')}"><title>${this.esc(title||'grouped bar chart')}</title>`;
+      if (title) s += `<text x="${w/2}" y="24" text-anchor="middle" fill="${ink}" font-size="14" font-weight="600">${this.esc(title)}</text>`;
+      for (let i=0;i<=5;i++){
+        const v = max * i/5, y = sy(v);
+        s += `<line x1="${pad.l}" y1="${y}" x2="${pad.l+iw}" y2="${y}" stroke="${line}" stroke-dasharray="${i===5?'':'3,3'}"/>`;
+        s += `<text x="${pad.l-8}" y="${y+4}" text-anchor="end" fill="${soft}" font-size="11">${v}${unit}</text>`;
+      }
+      data.forEach((d, gi) => {
+        const gx = pad.l + gi*groupW + groupW/2;
+        s += `<text x="${gx}" y="${h-45}" text-anchor="middle" fill="${soft}" font-size="11" transform="rotate(-30,${gx},${h-45})">${this.esc(d.group)}</text>`;
+        series.forEach((sr, si) => {
+          const val = d.values[si] ?? 0;
+          const bx = gx - (series.length*barW)/2 + si*barW;
+          const by = sy(val);
+          s += `<rect x="${bx}" y="${by}" width="${barW-2}" height="${pad.t+ih - by}" fill="${sr.color}" rx="2" opacity="0.85"/>`;
+        });
+      });
+      series.forEach((sr, si) => {
+        const lx = pad.l + (si % 4) * 150;
+        const ly = pad.t - 12 + Math.floor(si/4) * 18;
+        s += `<rect x="${lx}" y="${ly}" width="12" height="12" fill="${sr.color}" rx="2"/>`;
+        s += `<text x="${lx+18}" y="${ly+10}" fill="${soft}" font-size="10">${this.esc(sr.label)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    },
+    scatter(points, opts={}){
+      const {w=720,h=420,xlabel='',ylabel='',title='',xlog=false,ylog=false,xmax=null,ymax=null,parityLine=false,quadrants=false,xMid=null,yMid=null} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line'), red = this.c('--red');
+      const pad = {l:70,r:20,t:title?40:30,b:60}, iw = w-pad.l-pad.r, ih = h-pad.t-pad.b;
+      const validPts = points.filter(p=>p.x>0 && p.y>0);
+      if (!validPts.length) return '';
+      const xs = validPts.map(p=>p.x), ys = validPts.map(p=>p.y);
+      const xmaxV = xmax ?? (xlog ? Math.max(...xs)*1.3 : Math.max(...xs)*1.15);
+      const ymaxV = ymax ?? (ylog ? Math.max(...ys)*1.3 : Math.max(...ys)*1.1);
+      const xmin = xlog ? Math.min(...xs)*0.7 : 0;
+      const ymin = ylog ? Math.min(...ys)*0.7 : 0;
+      const sx = v => pad.l + (xlog ? (Math.log10(Math.max(v,xmin))-Math.log10(xmin))/(Math.log10(xmaxV)-Math.log10(xmin)) : (v-xmin)/(xmaxV-xmin)) * iw;
+      const sy = v => pad.t + ih - (ylog ? (Math.log10(Math.max(v,ymin))-Math.log10(ymin))/(Math.log10(ymaxV)-Math.log10(ymin)) : (v-ymin)/(ymaxV-ymin)) * ih;
+      let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="${this.esc(title||ylabel+' vs '+xlabel)}"><title>${this.esc(title||ylabel+' vs '+xlabel)}</title>`;
+      if (title) s += `<text x="${w/2}" y="24" text-anchor="middle" fill="${ink}" font-size="14" font-weight="600">${this.esc(title)}</text>`;
+      for(let i=0;i<=5;i++){
+        const v = ymin + (ymaxV-ymin)*i/5;
+        const y = sy(v);
+        s += `<line x1="${pad.l}" y1="${y}" x2="${pad.l+iw}" y2="${y}" stroke="${line}" stroke-dasharray="3,3" opacity="0.5"/>`;
+        s += `<text x="${pad.l-8}" y="${y+4}" text-anchor="end" fill="${soft}" font-size="11">${v>=1000?(v/1000).toFixed(0)+'B':v.toFixed(0)}</text>`;
+      }
+      s += `<line x1="${pad.l}" y1="${pad.t+ih}" x2="${pad.l+iw}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      s += `<line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      if (parityLine) {
+        s += `<line x1="${sx(Math.max(xmin,ymin))}" y1="${sy(Math.max(xmin,ymin))}" x2="${sx(Math.min(xmaxV,ymaxV))}" y2="${sy(Math.min(xmaxV,ymaxV))}" stroke="${soft}" stroke-dasharray="4,4" stroke-width="1.5"/>`;
+        s += `<text x="${sx(Math.min(xmaxV,ymaxV))-8}" y="${sy(Math.min(xmaxV,ymaxV))-8}" text-anchor="end" fill="${soft}" font-size="10">Dense parity</text>`;
+      }
+      if (quadrants) {
+        const xm = xMid || (xmin+xmaxV)/2, ym = yMid || (ymin+ymaxV)/2;
+        s += `<line x1="${sx(xm)}" y1="${pad.t}" x2="${sx(xm)}" y2="${pad.t+ih}" stroke="${soft}" stroke-dasharray="2,3" opacity="0.6"/>`;
+        s += `<line x1="${pad.l}" y1="${sy(ym)}" x2="${pad.l+iw}" y2="${sy(ym)}" stroke="${soft}" stroke-dasharray="2,3" opacity="0.6"/>`;
+        s += `<text x="${pad.l+iw-10}" y="${pad.t+20}" text-anchor="end" fill="${soft}" font-size="10" opacity="0.7">frontier premium</text>`;
+        s += `<text x="${pad.l+10}" y="${pad.t+20}" fill="${this.c('--accent-3')}" font-size="10" font-weight="600" opacity="0.8">best value</text>`;
+        s += `<text x="${pad.l+10}" y="${pad.t+ih-10}" fill="${soft}" font-size="10" opacity="0.7">cheap &amp; weak</text>`;
+        s += `<text x="${pad.l+iw-10}" y="${pad.t+ih-10}" text-anchor="end" fill="${soft}" font-size="10" opacity="0.7">expensive &amp; weak</text>`;
+      }
+      s += `<text x="${pad.l+iw/2}" y="${h-15}" text-anchor="middle" fill="${soft}" font-size="12">${this.esc(xlabel)}</text>`;
+      s += `<text x="20" y="${pad.t+ih/2}" text-anchor="middle" fill="${soft}" font-size="12" transform="rotate(-90,20,${pad.t+ih/2})">${this.esc(ylabel)}</text>`;
+      validPts.forEach(p=>{
+        const cx=sx(p.x),cy=sy(p.y), r=p.r||5;
+        s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${p.color||this.PALETTE[0]}" opacity="0.85" stroke="${this.c('--bg')}" stroke-width="1"/>`;
+        if (p.label) s += `<text x="${cx+(p.labelDx||6)}" y="${cy+(p.labelDy||-4)}" fill="${ink}" font-size="10"><title>${this.esc(p.label)}</title>${this.esc(p.label.length>16?p.label.slice(0,14)+'…':p.label)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    },
+    lines(series, opts={}){
+      const {w=720,h=380,xlabel='context (tokens)',ylabel='KV cache (GB)',title='',xlog=true,ylog=false,annotate=[32768,131072,1048576]} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line'), red = this.c('--red');
+      const pad = {l:70,r:140,t:title?40:30,b:50}, iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+      if (!series.length || !series[0].points.length) return '';
+      const all = series.flatMap(s=>s.points);
+      const xs = all.map(p=>p[0]).filter(x=>x>0), ys = all.map(p=>p[1]).filter(y=>y>0);
+      const xmaxV = Math.max(...xs)*1.05, xminV = xlog ? Math.min(...xs)*0.8 : 0;
+      const ymaxV = Math.max(...ys)*1.15, yminV = ylog ? Math.min(...ys)*0.8 : 0;
+      const sx = v => pad.l + (xlog ? (Math.log10(Math.max(v,xminV))-Math.log10(xminV))/(Math.log10(xmaxV)-Math.log10(xminV)) : (v-xminV)/(xmaxV-xminV)) * iw;
+      const sy = v => pad.t + ih - (ylog ? (Math.log10(Math.max(v,yminV))-Math.log10(yminV))/(Math.log10(ymaxV)-Math.log10(yminV)) : (v-yminV)/(ymaxV-yminV)) * ih;
+      let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="${this.esc(title||ylabel)}"><title>${this.esc(title||ylabel)}</title>`;
+      if (title) s += `<text x="${w/2}" y="24" text-anchor="middle" fill="${ink}" font-size="14" font-weight="600">${this.esc(title)}</text>`;
+      for (let i=0;i<=5;i++){
+        const v = yminV + (ymaxV-yminV)*i/5;
+        const y=sy(v);
+        s += `<line x1="${pad.l}" y1="${y}" x2="${pad.l+iw}" y2="${y}" stroke="${line}" stroke-dasharray="${i===5?'':'3,3'}" opacity="0.5"/>`;
+        s += `<text x="${pad.l-8}" y="${y+4}" text-anchor="end" fill="${soft}" font-size="11">${v.toFixed(1)}</text>`;
+      }
+      const twentyGB = 20;
+      if (twentyGB < ymaxV) {
+        s += `<line x1="${pad.l}" y1="${sy(twentyGB)}" x2="${pad.l+iw}" y2="${sy(twentyGB)}" stroke="${red}" stroke-dasharray="4,3" stroke-width="1" opacity="0.6"/>`;
+        s += `<text x="${pad.l+iw-8}" y="${sy(twentyGB)-4}" text-anchor="end" fill="${red}" font-size="10" opacity="0.8">20 GB (typical H100 budget)</text>`;
+      }
+      (annotate||[]).forEach(ax=>{
+        if (ax < xminV || ax > xmaxV) return;
+        const x = sx(ax);
+        s += `<line x1="${x}" y1="${pad.t}" x2="${x}" y2="${pad.t+ih}" stroke="${soft}" stroke-dasharray="2,3" opacity="0.5"/>`;
+        const label = ax >= 1000000 ? `${(ax/1000000).toFixed(0)}M` : `${(ax/1000).toFixed(0)}K`;
+        s += `<text x="${x}" y="${pad.t+14}" text-anchor="middle" fill="${soft}" font-size="10">${label}</text>`;
+      });
+      const xticks = xlog ? [8192,16384,32768,65536,131072,262144,524288,1048576,2097152].filter(x=>x>=xminV&&x<=xmaxV) : Array.from({length:5},(_,i)=>xminV+(xmaxV-xminV)*i/4);
+      xticks.forEach(tick=>{
+        const x=sx(tick);
+        s += `<line x1="${x}" y1="${pad.t+ih-3}" x2="${x}" y2="${pad.t+ih+3}" stroke="${line}"/>`;
+        const label = tick >= 1000000 ? `${(tick/1000000).toFixed(0)}M` : `${(tick/1000).toFixed(0)}K`;
+        s += `<text x="${x}" y="${h-25}" text-anchor="middle" fill="${soft}" font-size="10">${label}</text>`;
+      });
+      s += `<line x1="${pad.l}" y1="${pad.t+ih}" x2="${pad.l+iw}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      s += `<line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t+ih}" stroke="${line}"/>`;
+      s += `<text x="${pad.l+iw/2}" y="${h-8}" text-anchor="middle" fill="${soft}" font-size="12">${this.esc(xlabel)}</text>`;
+      s += `<text x="20" y="${pad.t+ih/2}" text-anchor="middle" fill="${soft}" font-size="12" transform="rotate(-90,20,${pad.t+ih/2})">${this.esc(ylabel)}</text>`;
+      series.forEach(sr=>{
+        if (!sr.points.length) return;
+        const isFlat = sr.points.length>1 && Math.abs(sr.points[sr.points.length-1][1] - sr.points[0][1]) < 1;
+        let d = sr.points.map((p,i)=>`${i===0?'M':'L'}${sx(p[0])},${sy(p[1])}`).join(' ');
+        s += `<path d="${d}" fill="none" stroke="${sr.color}" stroke-width="${isFlat?2:1.5}" ${isFlat?'stroke-dasharray="5,3"':''} opacity="0.9"/>`;
+        sr.points.forEach((p,i)=>i%2===0?s += `<circle cx="${sx(p[0])}" cy="${sy(p[1])}" r="3" fill="${sr.color}"/>`:'');
+        const last = sr.points[sr.points.length-1];
+        s += `<text x="${sx(last[0])+8}" y="${sy(last[1])+4}" fill="${sr.color}" font-size="10" font-weight="500">${this.esc(sr.label)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    },
+    timeline(items, opts={}){
+      const {w=760,h=null,startDate=null,endDate=null} = opts;
+      const ink = this.c('--ink'), soft = this.c('--ink-soft'), line = this.c('--line');
+      const pad = {l:40,r:40,t:50,b:70};
+      if (!items.length) return '';
+      const dates = items.map(it=>new Date(it.date).getTime());
+      const tStart = startDate ? new Date(startDate).getTime() : Math.min(...dates) - 30*86400000;
+      const tEnd = endDate ? new Date(endDate).getTime() : Math.max(...dates) + 30*86400000;
+      const H = h || (pad.t + pad.b + Math.ceil(items.length/2) * 44);
+      const iw = w - pad.l - pad.r;
+      const sx = t => pad.l + (t - tStart)/(tEnd - tStart)*iw;
+      const axisY = H - pad.b;
+      let s = `<svg viewBox="0 0 ${w} ${H}" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--mono);width:100%;" role="img" aria-label="Release timeline"><title>Release timeline</title>`;
+      s += `<line x1="${pad.l}" y1="${axisY}" x2="${w-pad.r}" y2="${axisY}" stroke="${line}" stroke-width="2"/>`;
+      const startYear = new Date(tStart).getFullYear(), endYear = new Date(tEnd).getFullYear();
+      for(let y=startYear;y<=endYear;y++){
+        for(let m=0;m<12;m+=1){
+          const t = new Date(y,m,1).getTime();
+          if (t < tStart || t > tEnd) continue;
+          const x = sx(t);
+          s += `<line x1="${x}" y1="${axisY-3}" x2="${x}" y2="${axisY+3}" stroke="${line}" opacity="${m%3===0?'0.6':'0.3'}"/>`;
+          if (m===0) s += `<text x="${x}" y="${axisY+20}" text-anchor="middle" fill="${soft}" font-size="11" font-weight="600">${y}</text>`;
+          else if (m%3===0) s += `<line x1="${x}" y1="${axisY-6}" x2="${x}" y2="${axisY+6}" stroke="${line}" opacity="0.5"/>`;
+        }
+      }
+      items.forEach((it,i)=>{
+        const t = new Date(it.date).getTime();
+        const x = sx(t);
+        const lane = it.lane != null ? it.lane : (i % 4);
+        const above = lane % 2 === 0;
+        const yOff = above ? -24 - Math.floor(lane/2)*48 : 24 + Math.floor(lane/2)*48;
+        const anchor = above ? 'end' : 'start';
+        const textY = axisY + yOff + (above ? -4 : 14);
+        const tagY = axisY + yOff + (above ? 10 : 28);
+        s += `<circle cx="${x}" cy="${axisY}" r="5" fill="${it.color||this.PALETTE[0]}" stroke="${this.c('--bg')}" stroke-width="1.5"/>`;
+        s += `<line x1="${x}" y1="${axisY}" x2="${x}" y2="${axisY+yOff}" stroke="${it.color||this.PALETTE[0]}" stroke-width="1.2" opacity="0.7"/>`;
+        s += `<text x="${x}" y="${textY}" text-anchor="middle" fill="${ink}" font-size="11" font-weight="600">${this.esc(it.label)}</text>`;
+        if (it.tag) s += `<text x="${x}" y="${tagY}" text-anchor="middle" fill="${soft}" font-size="9">${this.esc(it.tag)}</text>`;
+      });
+      s += `</svg>`;
+      return s;
+    }
+  };
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    if (window._renderCharts) window._renderCharts();
+  }
+
+  function sortTable(n) {
+    const table = document.getElementById('roster');
+    if (!table) return;
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.rows);
+    const asc = table.getAttribute('data-sort-'+n) !== 'asc';
+    rows.sort((a,b) => {
+      const va = a.cells[n].textContent.trim();
+      const vb = b.cells[n].textContent.trim();
+      const na = parseFloat(va.replace(/[^0-9.]/g,'')), nb = parseFloat(vb.replace(/[^0-9.]/g,''));
+      if (!isNaN(na) && !isNaN(nb)) return asc ? na-nb : nb-na;
+      return asc ? va.localeCompare(vb,'zh') : vb.localeCompare(va,'zh');
+    });
+    rows.forEach(r => tbody.appendChild(r));
+    for(let i=0;i<table.tHead.rows[0].cells.length;i++) table.removeAttribute('data-sort-'+i);
+    table.setAttribute('data-sort-'+n, asc?'asc':'desc');
+  }
+</script>
+</body>
+</html>
