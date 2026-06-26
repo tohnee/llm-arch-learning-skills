@@ -392,5 +392,159 @@ class TestModelDataConsistency(unittest.TestCase):
         self.assertGreaterEqual(moe_count, 8)
 
 
+class TestSourceValidation(unittest.TestCase):
+    """Test trusted source domain validation."""
+
+    def test_extract_domain(self):
+        """Test domain extraction from various URL formats."""
+        self.assertEqual(gr.extract_domain("https://huggingface.co/org/model"), "huggingface.co")
+        self.assertEqual(gr.extract_domain("https://www.huggingface.co/org/model"), "huggingface.co")
+        self.assertEqual(gr.extract_domain("huggingface.co/org/model"), "huggingface.co")
+        self.assertEqual(gr.extract_domain("https://arxiv.org/abs/1234.5678"), "arxiv.org")
+        self.assertEqual(gr.extract_domain("https://storage.googleapis.com/deepmind/report.pdf"), "storage.googleapis.com")
+        self.assertIsNone(gr.extract_domain(""))
+        self.assertIsNone(gr.extract_domain(None))
+
+    def test_trusted_domains_are_accepted(self):
+        """Test that official trusted domains pass validation."""
+        trusted_urls = [
+            "https://huggingface.co/deepseek-ai/DeepSeek-V3/blob/main/config.json",
+            "https://hf.co/meta-llama/Llama-4-Maverick-17B-128E",
+            "https://modelscope.cn/models/Qwen/Qwen3-235B-A22B",
+            "https://openrouter.ai/deepseek/deepseek-v4",
+            "https://arxiv.org/abs/2412.19437",
+            "https://github.com/deepseek-ai/DeepSeek-V3",
+            "https://api.deepseek.com/pricing",
+            "https://docs.anthropic.com/en/docs/about-claude/models",
+            "https://platform.openai.com/docs/pricing",
+            "https://ai.google.dev/gemma/docs",
+            "https://storage.googleapis.com/deepmind-media/gemma/gemma-4-report.pdf",
+            "https://www.minimaxi.io/news/minimax-m2",
+        ]
+        for url in trusted_urls:
+            self.assertTrue(gr.is_trusted_source(url), f"Should accept: {url}")
+
+    def test_prohibited_domains_are_rejected(self):
+        """Test that prohibited domains (blogs, social media, news) are rejected."""
+        prohibited_urls = [
+            "https://medium.com/@someuser/llm-analysis-123",
+            "https://www.reddit.com/r/LocalLLaMA/comments/xyz",
+            "https://twitter.com/ylecun/status/12345",
+            "https://x.com/OpenAI/status/12345",
+            "https://techcrunch.com/2026/01/15/new-model-release/",
+            "https://www.theverge.com/2026/1/15/ai-model",
+            "https://en.wikipedia.org/wiki/Large_language_model",
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "https://youtu.be/dQw4w9WgXcQ",
+            "https://artificialanalysis.ai/models",
+            "https://llm-stats.com/compare",
+            "https://randomblogger.wordpress.com/2026/01/15/llms/",
+        ]
+        for url in prohibited_urls:
+            self.assertFalse(gr.is_trusted_source(url), f"Should reject: {url}")
+
+    def test_untrusted_domains_are_rejected(self):
+        """Test that unknown/non-official domains are rejected."""
+        untrusted_urls = [
+            "https://example.com/fake-report.pdf",
+            "https://random-person.github.io/my-analysis.html",
+            "https://some-ai-news-site.com/deepseek-v4-leaked",
+        ]
+        for url in untrusted_urls:
+            self.assertFalse(gr.is_trusted_source(url), f"Should reject: {url}")
+
+    def test_valid_model_passes_validation(self):
+        """Test that a model with proper trusted sources passes validation."""
+        valid_model = {
+            "id": "test-model",
+            "display_name": "Test Model",
+            "sources": {
+                "huggingface_config": "https://huggingface.co/test/model/blob/main/config.json",
+                "technical_report": "https://arxiv.org/abs/2501.00001",
+                "last_verified": "2026-06-26"
+            }
+        }
+        is_valid, issues = gr.validate_model_sources(valid_model)
+        self.assertTrue(is_valid, f"Valid model should pass, got issues: {issues}")
+        self.assertEqual(len(issues), 0)
+
+    def test_model_without_sources_fails(self):
+        """Test that model missing sources object fails validation."""
+        bad_model = {"id": "bad-model", "display_name": "Bad Model"}
+        is_valid, issues = gr.validate_model_sources(bad_model)
+        self.assertFalse(is_valid)
+        self.assertTrue(any("missing sources" in i for i in issues))
+
+    def test_model_with_prohibited_source_fails(self):
+        """Test that model with prohibited source fails validation."""
+        bad_model = {
+            "id": "bad-model",
+            "display_name": "Bad Model",
+            "sources": {
+                "huggingface_config": "https://huggingface.co/test/model/blob/main/config.json",
+                "lab_blog": "https://medium.com/@fake/blog-post",
+                "last_verified": "2026-06-26"
+            }
+        }
+        is_valid, issues = gr.validate_model_sources(bad_model)
+        self.assertFalse(is_valid)
+        self.assertTrue(any("NOT from a trusted domain" in i for i in issues))
+
+    def test_model_without_last_verified_fails(self):
+        """Test that model missing last_verified date fails validation."""
+        bad_model = {
+            "id": "bad-model",
+            "display_name": "Bad Model",
+            "sources": {
+                "huggingface_config": "https://huggingface.co/test/model/blob/main/config.json",
+                "technical_report": "https://arxiv.org/abs/2501.00001"
+            }
+        }
+        is_valid, issues = gr.validate_model_sources(bad_model)
+        self.assertFalse(is_valid)
+        self.assertTrue(any("missing last_verified" in i for i in issues))
+
+    def test_model_without_p0_source_fails(self):
+        """Test that model with only P1 sources (arXiv only) fails validation."""
+        bad_model = {
+            "id": "bad-model",
+            "display_name": "Bad Model",
+            "sources": {
+                "technical_report": "https://arxiv.org/abs/2501.00001",
+                "last_verified": "2026-06-26"
+            }
+        }
+        is_valid, issues = gr.validate_model_sources(bad_model)
+        self.assertFalse(is_valid)
+        self.assertTrue(any("no P0 trusted source" in i for i in issues))
+
+    def test_closed_source_model_with_openrouter_passes(self):
+        """Test that closed/API-only model with OpenRouter page and lab blog passes."""
+        api_model = {
+            "id": "mistral-large-3",
+            "display_name": "Mistral Large 3",
+            "weights": "api",
+            "sources": {
+                "lab_blog": "https://mistral.ai/news/mistral-large-3",
+                "openrouter_page": "https://openrouter.ai/mistralai/mistral-large-3",
+                "technical_report": "https://arxiv.org/abs/2501.00001",
+                "last_verified": "2026-06-26"
+            }
+        }
+        is_valid, issues = gr.validate_model_sources(api_model)
+        self.assertTrue(is_valid, f"API model with official sources should pass, got: {issues}")
+
+    def test_real_snapshot_passes_source_validation(self):
+        """Test that the actual 2026-06-26 snapshot passes all source validations."""
+        snapshot_path = gr.get_paths("2026-06-26")["snapshot"]
+        if not os.path.exists(snapshot_path):
+            self.skipTest("Snapshot file not found")
+        
+        data = gr.load_snapshot(snapshot_path)
+        all_valid, issues = gr.validate_all_sources(data)
+        self.assertTrue(all_valid, f"Real snapshot has source issues: {issues}")
+        self.assertEqual(len(issues), 0)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
