@@ -735,20 +735,26 @@ def build_chart_js(models, rankings, lang='zh'):
 def main(snapshot_date=None, lang='zh', strict_sources=True):
     paths = get_paths(snapshot_date)
     snap = load_snapshot(paths['snapshot'])
-    models = snap['models']
-    rankings = snap['openrouter_rankings']
-    syn = snap.get('synthesis', {})
-    snap_date = paths['date']
-    snap_date_long = format_date_long(snap_date, lang)
 
+    # Run source validation FIRST before any other processing
     all_valid, source_issues = validate_all_sources(snap)
     if source_issues:
         print(f"WARNING: {len(source_issues)} source validation issue(s) found:")
         for issue in source_issues:
             print(f"  - {issue}")
         if strict_sources:
+            print()
             print("ERROR: Source validation failed. Run with --no-strict-sources to bypass.")
             sys.exit(1)
+
+    models = snap['models']
+    rankings = snap['openrouter_rankings']
+    syn = snap.get('synthesis', {})
+    snap_date = paths['date']
+    try:
+        snap_date_long = format_date_long(snap_date, lang)
+    except ValueError:
+        snap_date_long = snap_date
 
     with open(paths['template'], 'r', encoding='utf-8') as f:
         html = f.read()
